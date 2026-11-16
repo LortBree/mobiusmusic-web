@@ -1,14 +1,76 @@
-/* Mobius Music — Editorial Technical Studio (Mobius Dark Palette) */
+/* Mobius Music — Bundled Brand Fonts & Mobius Dark Theme */
+@font-face {
+  font-family: "Sora";
+  src: url("assets/fonts/Sora-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("assets/fonts/Sora-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("assets/fonts/Sora-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("assets/fonts/Sora-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sora";
+  src: url("assets/fonts/Sora-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("assets/fonts/Manrope-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("assets/fonts/Manrope-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("assets/fonts/Manrope-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("assets/fonts/Manrope-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manrope";
+  src: url("assets/fonts/Manrope-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-display: swap;
+}
+
 :root {
   --ground: #09090d;
-  --ground-2: #11131a;
-  --ink: #f3f4f8;
-  --ink-2: #a2a6b5;
-  --muted: #6c7282;
-  --pigment: #d4a373;
-  --hairline: rgba(243, 244, 248, 0.16);
-  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --font-mono: "Azeret Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ground-2: #19181f;
+  --ink: #ededed;
+  --ink-2: #a6a3b6;
+  --muted: #848094;
+  --pigment: #9e8fff;
+  --hairline: rgba(237, 237, 237, 0.14);
+  --font-display: "Sora", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 *, *::before, *::after {
@@ -20,8 +82,8 @@ html {
   scroll-behavior: smooth;
   background: var(--ground);
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-family: var(--font-ui);
+  font-size: 14px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -34,15 +96,16 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
+
 h1, h2, h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 400;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 em {
-  font-style: italic;
+  font-style: normal;
   color: var(--pigment);
 }
 
@@ -74,7 +137,7 @@ em {
   right: 0;
   height: 60px;
   z-index: 40;
-  background: rgba(9, 9, 13, 0.78);
+  background: rgba(9, 9, 13, 0.8);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--hairline);
@@ -94,7 +157,8 @@ em {
 .wordmark-nav {
   font-family: var(--font-display);
   font-size: 19px;
-  letter-spacing: -0.015em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 .nav-links {
@@ -104,8 +168,10 @@ em {
 }
 
 .nav-links a {
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-2);
   padding: 4px 0;
@@ -126,10 +192,10 @@ em {
   border: 1px solid var(--hairline);
   background: transparent;
   color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -173,24 +239,25 @@ em {
 
 .mono-label {
   margin: 0 0 14px;
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.17em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--pigment);
 }
 
 .hero-title {
-  font-size: clamp(30px, 4vw, 56px);
-  line-height: 1.04;
+  font-size: clamp(30px, 3.6vw, 50px);
+  line-height: 1.08;
   margin-bottom: 20px;
 }
 
 .hero-lede {
   margin: 0 0 28px;
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-2);
-  max-width: 46ch;
+  max-width: 48ch;
 }
 
 .hero-actions {
@@ -205,8 +272,10 @@ em {
   bottom: 24px;
   z-index: 4;
   margin: 0;
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -222,9 +291,10 @@ em {
   pointer-events: none;
   user-select: none;
   font-family: var(--font-display);
-  font-size: clamp(74px, 17.5vw, 258px);
-  line-height: 0.82;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  font-size: clamp(54px, 11.5vw, 184px);
+  line-height: 0.84;
+  letter-spacing: -0.04em;
 }
 
 .wm-upper {
@@ -236,16 +306,16 @@ em {
 .wm-lower {
   position: relative;
   z-index: 1;
-  color: rgba(243, 244, 248, 0.22);
+  color: rgba(237, 237, 237, 0.2);
 }
 
 .hero-subject {
   position: absolute;
-  right: clamp(36px, 12vw, 190px);
+  right: clamp(32px, 10vw, 165px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  width: clamp(180px, 24vw, 340px);
+  width: clamp(165px, 21vw, 310px);
   height: auto;
   pointer-events: none;
   filter: drop-shadow(0 28px 40px rgba(0, 0, 0, 0.72));
@@ -258,25 +328,26 @@ em {
 }
 
 .section-title {
-  font-size: clamp(28px, 3.2vw, 44px);
-  line-height: 1.08;
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 1.12;
   margin-bottom: 16px;
 }
 
 .sub-title {
-  font-size: 24px;
-  line-height: 1.15;
+  font-size: 22px;
+  line-height: 1.2;
   margin-bottom: 10px;
 }
 
 .body-mono {
   margin: 0 0 24px;
-  font-size: 12.5px;
+  font-size: 14px;
   color: var(--ink-2);
 }
 
 .body-mono code {
   font-family: var(--font-mono);
+  font-size: 12.5px;
   color: var(--ink);
 }
 
@@ -300,7 +371,7 @@ em {
 
 .ruled-dl > div {
   display: grid;
-  grid-template-columns: 118px 1fr auto;
+  grid-template-columns: 124px 1fr auto;
   gap: 16px;
   align-items: baseline;
   padding: 13px 0;
@@ -308,15 +379,22 @@ em {
 }
 
 .ruled-dl dt {
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--pigment);
 }
 
-.ruled-dl dd { margin: 0; font-size: 12px; }
+.ruled-dl dd {
+  margin: 0;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
 .dl-desc { color: var(--ink-2); }
-.dl-val { color: var(--ink); text-align: right; white-space: nowrap; }
+.dl-val { color: var(--ink); font-weight: 600; text-align: right; white-space: nowrap; }
 
 .drawing-figure {
   margin: 0;
@@ -358,9 +436,10 @@ em {
 
 .svg-text text {
   fill: var(--ink-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
+  font-weight: 600;
   font-size: 9px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
 }
 
 /* Pinned Study */
@@ -406,8 +485,10 @@ em {
 .readout-row > div:last-child { border-right: 0; }
 
 .readout-row dt {
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--pigment);
   margin-bottom: 4px;
@@ -415,7 +496,9 @@ em {
 
 .readout-row dd {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 
@@ -437,7 +520,7 @@ em {
 
 .ruled-row {
   display: grid;
-  grid-template-columns: 120px 1fr auto;
+  grid-template-columns: 124px 1fr auto;
   gap: 16px;
   align-items: baseline;
   padding: 15px 0;
@@ -445,16 +528,21 @@ em {
 }
 
 .row-tag {
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--pigment);
 }
 
 .row-desc { color: var(--ink-2); }
+
 .row-class {
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--ink);
   text-align: right;
@@ -501,9 +589,10 @@ em {
 }
 
 .work-table th {
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
   padding: 12px 10px 12px 0;
@@ -514,22 +603,30 @@ em {
 .work-table td {
   padding: 16px 10px 16px 0;
   border-bottom: 1px solid var(--hairline);
-  font-size: 12px;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
   color: var(--ink-2);
+}
+
+.work-table td:nth-child(2) {
+  font-family: var(--font-mono);
+  font-size: 12px;
 }
 
 .work-table td.dac-title {
   font-family: var(--font-display);
-  font-size: clamp(15px, 1.5vw, 21px);
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  font-size: clamp(15px, 1.35vw, 19px);
+  letter-spacing: -0.015em;
   color: var(--ink);
 }
 
 .work-table td.dac-status-cell {
   color: var(--pigment);
   text-transform: uppercase;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
 }
 
 .table-empty {
@@ -549,7 +646,7 @@ em {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 
@@ -564,8 +661,10 @@ em {
 }
 
 .form-row label {
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
@@ -576,6 +675,11 @@ em {
   border: 1px solid var(--hairline);
   background: var(--ground-2);
   color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+}
+
+textarea#dac-json-input {
   font-family: var(--font-mono);
   font-size: 12px;
 }
@@ -594,7 +698,7 @@ em {
 
 .form-status {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 13px;
   color: var(--pigment);
 }
 
@@ -616,9 +720,9 @@ em {
 
 .fine-print {
   margin: 0;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--ink-2);
-  max-width: 70ch;
+  max-width: 72ch;
 }
 
 .copy-hash {
@@ -627,7 +731,7 @@ em {
   background: transparent;
   color: var(--ink);
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -645,8 +749,10 @@ em {
   gap: 16px;
   padding: 20px 0;
   border-top: 1px solid var(--hairline);
-  font-size: 10.5px;
-  letter-spacing: 0.15em;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -661,9 +767,10 @@ em {
 
 .close-wordmark {
   font-family: var(--font-display);
-  font-size: clamp(80px, 20vw, 300px);
+  font-weight: 800;
+  font-size: clamp(64px, 16.5vw, 240px);
   line-height: 0.82;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
   text-align: center;
   color: var(--ink);
   transform: translateY(0.17em);
