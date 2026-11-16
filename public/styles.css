@@ -147,10 +147,10 @@ code {
 
 .mono {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--mono-c);
 }
 
@@ -223,12 +223,13 @@ code {
 }
 .nav-links a {
   display: block;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--mono-c);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--steel);
   white-space: nowrap;
   transition: color 0.25s, background 0.25s;
 }
@@ -421,25 +422,24 @@ code {
 .hero-wordmark {
   margin: 4px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(12px, 1.2vw, 15px);
+  font-size: 12.5px;
   font-weight: 700;
-  letter-spacing: 0.32em;
-  color: #FFFFFF;
+  letter-spacing: 0.18em;
+  color: var(--amber);
 }
 .hero-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(38px, 6.2vw, 78px);
+  font-size: clamp(34px, 5.6vw, 70px);
   font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
   color: #FFFFFF;
 }
 .hero-title span { display: block; }
 .hero-title .muted-title {
-  color: #FFFFFF;
-  font-weight: 800;
-  opacity: 1;
+  color: rgba(244, 245, 247, 0.72);
+  font-weight: 700;
 }
 .hero-sub {
   max-width: 760px;
@@ -470,10 +470,18 @@ code {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px 22px;
-  color: #FFFFFF;
+  gap: 10px;
+}
+.hero-tags span {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(244, 245, 247, 0.9);
+  font-family: var(--font-body);
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0;
 }
 .cta-group {
   display: flex;
@@ -594,9 +602,10 @@ code {
 .card-glyph {
   display: inline-block;
   margin-top: auto;
-  font-size: 11px;
-  color: var(--blue);
-  word-break: break-all;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber);
 }
 
 /* --------------------------------------------------------------------------
@@ -616,10 +625,11 @@ code {
   border-radius: 999px;
   border: 0;
   background: transparent;
-  color: var(--mono-c);
+  color: var(--steel);
   cursor: pointer;
-  letter-spacing: 0.1em;
-  font-size: 11px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
   transition: all 0.25s var(--ease);
 }
 .path-toggle button.is-active {
@@ -684,8 +694,11 @@ code {
 }
 .node span.mono {
   display: block;
-  margin-top: 2px;
-  font-size: 10px;
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
   color: var(--steel);
 }
 
@@ -750,10 +763,10 @@ code {
   background: linear-gradient(90deg, transparent, rgba(212, 163, 115, 0.5), transparent);
 }
 .card-download h3 {
-  font-family: var(--font-mono);
-  font-size: clamp(16px, 1.6vw, 20px);
-  letter-spacing: -0.01em;
-  word-break: break-all;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 1.8vw, 24px);
+  color: var(--platinum);
 }
 
 .spec-list {
@@ -807,7 +820,7 @@ code {
 .is-copied .checksum-action,
 .is-copied [data-copy-label] { color: var(--amber); border-color: var(--amber); }
 
-.support-text { margin: 0; font-size: 16px; font-style: italic; color: var(--steel); }
+.support-text { margin: 0; font-size: 15px; font-style: normal; color: var(--steel); }
 
 /* Contribution Tiers in USD */
 .support-tiers {
@@ -1140,7 +1153,7 @@ code {
 .footer-links { display: flex; gap: 14px; flex-wrap: wrap; }
 .footer-links a { transition: color 0.25s; }
 .footer-links a:hover { color: var(--blue); }
-.footer-bottom { margin: 28px 0 0; font-size: 10px; text-align: center; text-transform: none; }
+.footer-bottom { margin: 28px 0 0; font-size: 12px; color: var(--mono-c); text-align: center; }
 
 /* --------------------------------------------------------------------------
    Responsive Layouts
@@ -1172,7 +1185,7 @@ code {
   .cta-group .btn { width: 100%; }
   .path { padding: 24px 18px; }
   .path-toggle { display: flex; width: 100%; }
-  .path-toggle button { flex: 1; padding: 10px 6px; font-size: 9.5px; }
+  .path-toggle button { flex: 1; padding: 10px 8px; font-size: 11.5px; }
   .spec-list { grid-template-columns: 1fr; }
   .spec-list div:nth-child(odd) { padding-right: 0; }
   .spec-list div:nth-child(even) { padding-left: 0; border-left: 0; }
@@ -1195,7 +1208,7 @@ code {
   .hero-title { font-size: clamp(30px, 9vw, 36px); }
   .hero-sub { padding: 14px 16px; font-size: 13.5px; }
   .card { padding: 22px 16px; }
-  .card-download h3 { font-size: 14.5px; }
+  .card-download h3 { font-size: 18px; }
   .btn { padding: 13px 16px; font-size: 13.5px; gap: 8px; }
   .support-actions .btn { width: 100%; font-size: 13.5px; padding: 13px 14px; }
   .saweria-qr-card { padding: 10px 12px; gap: 12px; }
