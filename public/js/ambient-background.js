@@ -180,10 +180,10 @@
   let height = 0;
 
   function resize() {
-    // Render at 0.5x resolution for silky performance on mobile/tablets
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = Math.floor(window.innerWidth * dpr * 0.5);
-    const h = Math.floor(window.innerHeight * dpr * 0.5);
+    // Low-res atmospheric texture upscaled cleanly on GPU (matches AmbientConfig)
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+    const w = Math.max(240, Math.floor(window.innerWidth * dpr * 0.35));
+    const h = Math.max(180, Math.floor(window.innerHeight * dpr * 0.35));
     if (width !== w || height !== h) {
       width = w;
       height = h;
@@ -197,9 +197,16 @@
   window.addEventListener('resize', resize, { passive: true });
   resize();
 
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) {
+    gl.uniform1f(timeLoc, 1.5);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    return;
+  }
+
   let startTime = performance.now();
   let lastFrameTime = 0;
-  const TARGET_FPS = 30;
+  const TARGET_FPS = 20;
   const FRAME_INTERVAL = 1000 / TARGET_FPS;
   let isRunning = true;
 
