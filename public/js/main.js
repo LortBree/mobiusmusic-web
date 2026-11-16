@@ -1,174 +1,27 @@
-/* ==========================================================================
-   Mobius Music — UI Interactions & High-Performance Visual Identity
-   - 120 FPS pointer/gyro tracking with organic lerp inertia for 2D fallback
-   - Staggered scroll reveals
-   - Floating navigation bar with scroll direction detection
-   - One-click SHA-256 copy with instant feedback
-   - Interactive Signal Path comparison switcher
-   - Copyright year dynamic updater
-   ========================================================================== */
 (() => {
   'use strict';
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
-  /* ---------------------------------------------------------------------
-     1. High-Performance 2D Centerpiece Fallback (Interactive Tilt)
-     --------------------------------------------------------------------- */
-  const hero = $('#hero');
-  const rig = $('#mobius-rig');
-
-  if (rig && hero && !reduceMotion) {
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let isHeroVisible = true;
-    let rafId = null;
-
-    // Track mouse / pointer
-    window.addEventListener(
-      'pointermove',
-      (e) => {
-        const cx = window.innerWidth / 2;
-        const cy = window.innerHeight / 2;
-        targetX = (e.clientX - cx) / cx; // -1 to 1
-        targetY = (e.clientY - cy) / cy; // -1 to 1
-      },
-      { passive: true }
-    );
-
-    // Track device orientation / gyroscope on mobile
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener(
-        'deviceorientation',
-        (e) => {
-          if (e.gamma == null || e.beta == null) return;
-          targetX = Math.min(1, Math.max(-1, e.gamma / 30));
-          targetY = Math.min(1, Math.max(-1, (e.beta - 45) / 30));
-        },
-        { passive: true }
-      );
-    }
-
-    // Scroll-driven tilt & fade
-    let scrollProgress = 0;
-    const onScroll = () => {
-      const scrollY = window.scrollY;
-      const vh = window.innerHeight;
-      scrollProgress = Math.min(1, scrollY / (vh * 0.8));
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    // Smooth lerp animation loop (runs only when hero is visible and 3D isn't active)
-    const loop = () => {
-      if (!isHeroVisible || document.documentElement.classList.contains('is-3d-ready')) {
-        rafId = null;
-        return;
-      }
-
-      // Smooth inertia lerp (k = 0.08)
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
-
-      const rotX = -currentY * 18 + scrollProgress * 22;
-      const rotY = currentX * 24 + scrollProgress * -15;
-      const scale = 1 - scrollProgress * 0.22;
-      const opacity = Math.max(0, 1 - scrollProgress * 1.4);
-
-      rig.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-      rig.style.opacity = opacity.toFixed(3);
-
-      rafId = requestAnimationFrame(loop);
-    };
-
-    // IntersectionObserver to pause loop when scrolled past hero
-    if ('IntersectionObserver' in window) {
-      const heroIO = new IntersectionObserver(
-        (entries) => {
-          isHeroVisible = entries[0].isIntersecting;
-          if (isHeroVisible && !rafId && !document.documentElement.classList.contains('is-3d-ready')) {
-            rafId = requestAnimationFrame(loop);
-          }
-        },
-        { threshold: 0.05 }
-      );
-      heroIO.observe(hero);
-    } else {
-      rafId = requestAnimationFrame(loop);
-    }
-  }
-
-  /* ---------------------------------------------------------------------
-     2. Staggered Scroll Reveals
-     --------------------------------------------------------------------- */
-  const revealEls = $$('.reveal');
-  const groups = new Map();
-  revealEls.forEach((el) => {
-    const p = el.parentElement;
-    const i = groups.get(p) || 0;
-    el.style.setProperty('--d', `${Math.min(i, 6) * 70}ms`);
-    groups.set(p, i + 1);
+  // 1. Signal path switcher
+  const tabButtons = $$('.segmented [data-path]');
+  const pathViews = $$('[data-path-view]');
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.path;
+      tabButtons.forEach((b) => {
+        const active = b.dataset.path === target;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-selected', String(active));
+      });
+      pathViews.forEach((panel) => {
+        panel.hidden = panel.dataset.pathView !== target;
+      });
+    });
   });
 
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-in');
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { rootMargin: '0px 0px -6% 0px', threshold: 0.05 }
-    );
-    revealEls.forEach((el) => io.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add('is-in'));
-  }
-
-  /* ---------------------------------------------------------------------
-     3. Floating Nav: Hide on scroll down, show on scroll up
-     --------------------------------------------------------------------- */
-  const nav = $('.nav');
-  let lastY = window.scrollY;
-  window.addEventListener(
-    'scroll',
-    () => {
-      const y = window.scrollY;
-      if (nav) nav.classList.toggle('is-hidden', y > lastY && y > 240);
-      lastY = y;
-    },
-    { passive: true }
-  );
-
-  const navLinks = $$('[data-nav]');
-  const sectionMap = navLinks
-    .map((a) => ({ a, el: document.querySelector(a.getAttribute('href')) }))
-    .filter((x) => x.el);
-
-  if ('IntersectionObserver' in window && sectionMap.length) {
-    const navIO = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          const hit = sectionMap.find((x) => x.el === e.target);
-          if (hit && e.isIntersecting) {
-            navLinks.forEach((l) => l.classList.remove('is-active'));
-            hit.a.classList.add('is-active');
-          }
-        });
-      },
-      { rootMargin: '-45% 0px -50% 0px' }
-    );
-    sectionMap.forEach((x) => navIO.observe(x.el));
-  }
-
-  /* ---------------------------------------------------------------------
-     4. Copy SHA-256 Checksum (One Click)
-     --------------------------------------------------------------------- */
+  // 2. Copy SHA-256 checksum
   const copyText = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -190,42 +43,17 @@
 
   $$('[data-copy]').forEach((btn) => {
     const label = $('[data-copy-label]', btn);
-    const original = label ? label.textContent : '';
+    const original = label ? label.textContent : 'Copy';
     btn.addEventListener('click', async () => {
       const ok = await copyText(btn.dataset.copy);
       if (!label) return;
-      label.textContent = ok ? 'COPIED ✓' : 'FAILED';
-      btn.classList.add('is-copied');
+      label.textContent = ok ? 'Copied' : 'Failed';
       clearTimeout(btn._t);
-      btn._t = setTimeout(() => {
-        label.textContent = original;
-        btn.classList.remove('is-copied');
-      }, 1800);
+      btn._t = setTimeout(() => { label.textContent = original; }, 1600);
     });
   });
 
-  /* ---------------------------------------------------------------------
-     5. Interactive Signal Path Toggle
-     --------------------------------------------------------------------- */
-  const paths = $('.paths');
-  const tabs = $$('.path-toggle [data-path]');
-  const setPath = (name) => {
-    if (!paths) return;
-    paths.dataset.active = name;
-    tabs.forEach((t) => {
-      const on = t.dataset.path === name;
-      t.classList.toggle('is-active', on);
-      t.setAttribute('aria-selected', String(on));
-    });
-  };
-  tabs.forEach((t) => t.addEventListener('click', () => setPath(t.dataset.path)));
-  $$('[data-path-panel]').forEach((p) =>
-    p.addEventListener('mouseenter', () => setPath(p.dataset.pathPanel))
-  );
-
-  /* ---------------------------------------------------------------------
-     6. DAC Compatibility Matrix, Diagnostic Submission & WebMCP Tools
-     --------------------------------------------------------------------- */
+  // 3. DAC Compatibility Matrix & Diagnostic Upload (with WebMCP)
   let dacCatalog = [];
   const dacTableBody = $('#dac-table-body');
   const dacSearchInput = $('#dac-search-input');
@@ -237,7 +65,7 @@
       const tr = document.createElement('tr');
       const td = document.createElement('td');
       td.colSpan = 5;
-      td.className = 'mono dac-empty';
+      td.className = 'table-empty';
       td.textContent = 'No matching DACs yet. Submit your profile dump on the right.';
       tr.appendChild(td);
       dacTableBody.appendChild(tr);
@@ -248,27 +76,24 @@
 
       const tdName = document.createElement('td');
       tdName.textContent = dac.name || 'Unknown DAC';
-      const protoSpan = document.createElement('span');
-      protoSpan.className = 'dac-proto mono';
-      protoSpan.textContent = dac.protocol || 'UAC2';
-      tdName.appendChild(protoSpan);
+      const proto = document.createElement('span');
+      proto.className = 'dac-proto';
+      proto.textContent = dac.protocol || 'UAC2';
+      tdName.appendChild(proto);
 
       const tdId = document.createElement('td');
-      tdId.className = 'mono';
       tdId.textContent = `${dac.vid}:${dac.pid}`;
 
       const tdSpec = document.createElement('td');
-      tdSpec.className = 'mono';
       tdSpec.textContent = `${dac.max_rate || '-'} / ${dac.max_bits || '-'}`;
 
       const tdVol = document.createElement('td');
-      tdVol.className = 'mono';
       tdVol.textContent = dac.hw_volume ? 'Yes' : 'SW';
 
       const tdStatus = document.createElement('td');
       const pill = document.createElement('span');
-      const isVerified = String(dac.status || '').toLowerCase().includes('verified');
-      pill.className = `dac-status mono${isVerified ? ' is-verified' : ''}`;
+      const verified = String(dac.status || '').toLowerCase().includes('verified');
+      pill.className = `dac-status${verified ? ' is-verified' : ''}`;
       pill.textContent = dac.status || 'Testing';
       tdStatus.appendChild(pill);
 
@@ -287,14 +112,12 @@
 
   if (dacTableBody) {
     fetch('dacs.json')
-      .then((res) => (res.ok ? res.json() : []))
+      .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         dacCatalog = Array.isArray(data) ? data : [];
         renderDacRows(dacCatalog);
       })
-      .catch(() => {
-        renderDacRows([]);
-      });
+      .catch(() => renderDacRows([]));
   }
 
   if (dacSearchInput) {
@@ -360,7 +183,6 @@
     });
   }
 
-  // Imperative WebMCP registrations for AI browser agents
   if ('modelContext' in document && typeof document.modelContext?.registerTool === 'function') {
     Promise.resolve(
       document.modelContext.registerTool({
@@ -423,9 +245,6 @@
     ).catch(() => {});
   }
 
-  /* ---------------------------------------------------------------------
-     7. Copyright Year Dynamic Updater
-     --------------------------------------------------------------------- */
   const yearEl = $('[data-year]');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 })();

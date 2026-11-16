@@ -1,495 +1,371 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Mobius Music - Offline Music Player for Android and macOS</title>
-  <meta name="description"
-    content="An offline hi-res music player built with Flutter and Rust, featuring Direct UAC2 bit-perfect USB DAC output, 64-bit Studio DSP, and local library indexing." />
-  <meta name="theme-color" content="#08090B" />
-  <meta property="og:title" content="Mobius Music - Offline Music Player" />
-  <meta property="og:description"
-    content="Offline hi-res music player built with Flutter and Rust, featuring Direct UAC2 USB DAC output and Studio DSP." />
+  <title>Mobius Music — Offline Hi-Res Player &amp; Direct USB DAC Audio</title>
+  <meta name="description" content="Offline music player for Android and macOS with a Rust audio engine, Direct UAC2 USB DAC passthrough, 64-bit Parametric EQ, and 9:16 audio-synced share cards." />
+  <meta name="theme-color" content="#09090D" />
+  <meta property="og:title" content="Mobius Music — Offline Hi-Res Audio Player" />
+  <meta property="og:description" content="Direct UAC2 USB DAC output in Rust, 64-bit Studio DSP, and local lossless library playback. No accounts, no ads." />
   <meta property="og:type" content="website" />
-  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=7" />
-  <link rel="stylesheet" href="styles.css?v=7" />
-
+  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=8" />
+  <link rel="stylesheet" href="styles.css?v=8" />
 </head>
-
 <body>
-  <!-- macOS Desktop Atmospheric Ambient Glow Canvas -->
-  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+  <!-- Lightweight CSS-only Mobius ambient glow (zero WebGL / zero JS loop) -->
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="ambient-orb orb-violet"></span>
+    <span class="ambient-orb orb-magenta"></span>
+    <span class="ambient-orb orb-cyan"></span>
+  </div>
 
-  <!-- ============================================================
-       SECTION 1: FLOATING NAVIGATION BAR
-       ============================================================ -->
-  <header class="nav-wrap">
-    <nav class="nav" aria-label="Main Navigation">
-      <a href="#top" class="nav-brand" aria-label="Mobius: Back to top">
-        <img src="assets/icons/mobi%20white.svg?v=3" class="brand-logo-img" alt="Mobius Logo" width="28" height="28" />
-        <span>MOBIUS</span>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#top" class="brand" aria-label="Mobius Music home">
+        <img src="assets/icons/mobi%20white.svg?v=8" width="24" height="24" alt="" />
+        <span>Mobius</span>
       </a>
 
-      <ul class="nav-links">
-        <li><a href="#architecture" data-nav>[ 01 // ARCHITECTURE ]</a></li>
-        <li><a href="#signal-path" data-nav>[ 02 // SIGNAL FLOW ]</a></li>
-        <li><a href="#dac-hub" data-nav>[ 03 // DAC HUB ]</a></li>
-        <li><a href="#download" data-nav>[ 04 // DOWNLOAD &amp; SPECS ]</a></li>
-      </ul>
+      <nav class="nav" aria-label="Primary">
+        <a href="#signal-path">Signal Path</a>
+        <a href="#dac-hub">DAC Matrix</a>
+        <a href="#studio">Studio License</a>
+        <a href="#download">Download</a>
+      </nav>
 
-      <a href="#download" class="nav-cta">
-        <span>Download APK <em>(v2.0.1)</em></span>
-        <span class="nav-cta-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </span>
-      </a>
-    </nav>
+      <a href="#download" class="btn btn-sm btn-primary">Download v2.0.1</a>
+    </div>
   </header>
 
   <main id="top">
-    <!-- ============================================================
-         SECTION 2: HERO: THE INFINITE SOUND
-         ============================================================ -->
-    <section class="hero" id="hero">
-      <div class="hero-top">
-        <p class="hero-wordmark mono reveal">M O B I U S &nbsp; M U S I C</p>
-
-        <h1 class="hero-title reveal">
-          <span>OFFLINE AUDIO.</span>
-          <span class="muted-title">POWERED BY RUST.</span>
-        </h1>
-
-        <!-- Authentic Mobius Logo Centerpiece -->
-        <div class="hero-logo-centerpiece reveal" aria-hidden="true">
-          <img src="assets/icons/mobi%20white.svg?v=8" class="hero-logo-img" alt="Mobius Official Logo" width="280"
-            height="280" />
-        </div>
-      </div>
-
-      <div class="hero-bottom">
-        <p class="hero-sub reveal">
-          Mobius pairs a Flutter interface with an audio engine written in Rust. It decodes lossless files locally,
-          supports low-latency AAudio and direct USB DAC communication, and plays your music without remote accounts or
-          ads.
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="hero-copy">
+        <p class="eyebrow">Android &amp; macOS · v2.0.1</p>
+        <h1>Offline hi-res music player with direct USB DAC output.</h1>
+        <p class="lead">
+          Decoding, resampling policy, and 64-bit DSP run in native Rust—isolated from the UI thread.
+          Plug in a UAC1 or UAC2 USB DAC on Android to bypass the system mixer at your track’s native sample rate.
         </p>
 
-        <div class="hero-tags mono reveal">
-          <span>[ LOSSLESS PLAYBACK ]</span>
-          <span>[ LOW-LATENCY AAUDIO ]</span>
-          <span>[ DIRECT USB DAC ]</span>
-          <span>[ RUST AUDIO CORE ]</span>
-        </div>
-
-        <div class="cta-group reveal">
-          <a href="#download" class="btn btn-primary">
-            Download APK (v2.0.1)
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 4v12m0 0-5-5m5 5 5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
-          </a>
-          <a href="#dac-hub" class="btn btn-ghost">
-            USB DAC Support
+        <div class="hero-actions">
+          <a href="#download" class="btn btn-primary">Download APK (v2.0.1)</a>
+          <a href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0" target="_blank" rel="noopener" class="btn btn-secondary">
+            Get Studio License
           </a>
         </div>
 
-        <a href="#architecture" class="scroll-cue mono" aria-label="Scroll to architecture section">
-          <span>SCROLL</span><i></i>
-        </a>
+        <dl class="hero-facts">
+          <div>
+            <dt>Core Playback</dt>
+            <dd>Free · Direct UAC2 / CoreAudio</dd>
+          </div>
+          <div>
+            <dt>Studio License</dt>
+            <dd>One-time · Up to 3 devices</dd>
+          </div>
+          <div>
+            <dt>Privacy</dt>
+            <dd>Offline-first · No accounts or ads</dd>
+          </div>
+        </dl>
       </div>
     </section>
 
-    <!-- ============================================================
-         SECTION 3: THE ARCHITECTURE MANIFESTO
-         ============================================================ -->
-    <section class="section panel" id="architecture">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow mono reveal">[ 01 // ARCHITECTURE ]</p>
-          <h2 class="section-title reveal">Native Audio Engine and Direct Hardware Access</h2>
-          <p class="section-lead reveal">An offline music player with a dedicated Rust audio engine, designed for
-            responsive playback, flexible audio routing, and direct USB DAC communication without ads or telemetry.</p>
+    <!-- Signal Path Comparison -->
+    <section class="section container" id="signal-path">
+      <div class="section-header">
+        <div>
+          <h2>Audio Signal Path</h2>
+          <p class="section-sub">Compare standard Android system mixing against Mobius Direct UAC2 hardware passthrough.</p>
         </div>
-
-        <div class="grid-3 hairline-grid">
-          <article class="manifesto-card reveal">
-            <p class="card-index mono">[ 01 // USB AUDIO ROUTING ]</p>
-            <h3>Direct USB DAC Communication</h3>
-            <p>When connected to a supported USB DAC, Mobius can communicate with the device in user space using Android
-              USB host APIs and libusb. This sends PCM audio frames directly to the DAC endpoint at the track native
-              sample rate, bypassing shared system mixing.</p>
-            <span class="card-glyph mono" aria-hidden="true">ioctl(fd, USBDEVFS_CLAIMINTERFACE)</span>
-          </article>
-          <article class="manifesto-card reveal">
-            <p class="card-index mono">[ 02 // NATIVE RUST CORE ]</p>
-            <h3>Dedicated Audio Thread in Rust</h3>
-            <p>Audio decoding, ring buffer management, and DSP calculations run in native Rust outside the Dart
-              garbage-collected heap. This isolates audio processing from UI rendering, reducing the risk of buffer
-              underruns.</p>
-            <span class="card-glyph mono" aria-hidden="true">let transfer = libusb_alloc_transfer(16);</span>
-          </article>
-          <article class="manifesto-card reveal">
-            <p class="card-index mono">[ 03 // VOLUME CONTROL ]</p>
-            <h3>64-Bit Float Volume Scaling</h3>
-            <p>For USB DACs that lack hardware volume controls or UAC2 mixer endpoints, Mobius applies 64-bit
-              floating-point volume scaling with a logarithmic taper, mapped to the phone physical volume buttons.</p>
-            <span class="card-glyph mono" aria-hidden="true">pcm = ((raw as f64) * gain).round()</span>
-          </article>
+        <div class="segmented" role="tablist" aria-label="Signal path mode">
+          <button type="button" role="tab" aria-selected="true" class="is-active" data-path="mobius">Direct USB (Mobius)</button>
+          <button type="button" role="tab" aria-selected="false" data-path="standard">System Mixer</button>
         </div>
       </div>
-    </section>
 
-    <!-- ============================================================
-         SECTION 4: INTERACTIVE SIGNAL PATH COMPARISON
-         ============================================================ -->
-    <section class="section panel" id="signal-path">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow mono reveal">[ 02 // SIGNAL FLOW ]</p>
-          <h2 class="section-title reveal">Shared System Audio vs Direct USB Routing</h2>
-          <p class="section-lead reveal">Audio on Android can be routed through the shared system mixer or directly to
-            an external USB DAC endpoint.</p>
-        </div>
-
-        <div class="path-toggle mono reveal" role="tablist" aria-label="Select signal path">
-          <button role="tab" aria-selected="false" data-path="standard">[ SHARED SYSTEM AUDIO ]</button>
-          <button role="tab" aria-selected="true" data-path="mobius" class="is-active">[ DIRECT USB ROUTING ]</button>
-        </div>
-
-        <div class="paths reveal" data-active="mobius">
-          <!-- Standard path -->
-          <div class="path path-standard" data-path-panel="standard">
-            <p class="path-label mono">[ SHARED SYSTEM AUDIO ]</p>
-            <ol class="flow">
-              <li class="node">
-                <span class="node-step mono">00</span>
-                <div><strong>FLAC File</strong><span class="mono">96kHz / 24-bit Audio Source</span></div>
-              </li>
-              <li class="node">
-                <span class="node-step mono">01</span>
-                <div><strong>AudioTrack / AAudio</strong><span class="mono">SHARED APPLICATION AUDIO STREAM</span></div>
-              </li>
-              <li class="node">
-                <span class="node-step mono">02</span>
-                <div><strong>System Audio Server</strong><span class="mono">MIXES AUDIO WITH OTHER ACTIVE STREAMS</span>
-                </div>
-              </li>
-              <li class="node">
-                <span class="node-step mono">03</span>
-                <div><strong>Device Resampling</strong><span class="mono">ADJUSTS RATE TO MATCH DEVICE MIXER</span>
-                </div>
-              </li>
-              <li class="node node-end-bad">
-                <span class="node-step mono">04</span>
-                <div><strong>Audio Output Device</strong><span class="mono">OUTPUTS AT CONFIGURED DEVICE MIXER
-                    RATE</span></div>
-              </li>
-            </ol>
-            <div class="path-result mono"><span class="dot dot-amber"></span> OUTPUT: MATCHES SYSTEM MIXER CONFIGURATION
+      <div class="path-panel" data-path-view="mobius">
+        <ol class="flow-steps">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <strong>Lossless Source</strong>
+              <span>FLAC / WAV / ALAC decoded in Rust</span>
             </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <strong>64-Bit Audio Core</strong>
+              <span>Bit-perfect passthrough or PEQ / Tone Matrix</span>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <strong>Isochronous USB (libusb)</strong>
+              <span>User-space transfer via Android USB Host</span>
+            </div>
+          </li>
+          <li class="is-highlight">
+            <span class="step-num">4</span>
+            <div>
+              <strong>USB DAC Endpoint</strong>
+              <span>Native track sample rate &amp; hardware volume</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="path-panel" data-path-view="standard" hidden>
+        <ol class="flow-steps">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <strong>Audio Source</strong>
+              <span>Decoded audio handed to OS stream</span>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <strong>AudioTrack / AAudio</strong>
+              <span>Shared application audio session</span>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <strong>System AudioFlinger</strong>
+              <span>Mixed and resampled to device mixer rate (typically 48 kHz)</span>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <div>
+              <strong>Output Device</strong>
+              <span>Receives OS-resampled stream</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- DAC Compatibility & Diagnostic Hub -->
+    <section class="section container" id="dac-hub">
+      <div class="section-header">
+        <div>
+          <h2>USB DAC Compatibility &amp; Diagnostics</h2>
+          <p class="section-sub">Check tested DACs or submit a JSON profile dump from <strong>Settings → USB DAC</strong> if your DAC is silent or falls back to AAudio.</p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="surface">
+          <div class="toolbar">
+            <label for="dac-search-input" class="sr-only">Filter DACs by name, VID/PID, or protocol</label>
+            <input
+              id="dac-search-input"
+              type="search"
+              class="input"
+              placeholder="Search DAC model, VID:PID, or UAC1 / UAC2..."
+              autocomplete="off"
+            />
           </div>
 
-          <!-- Mobius path -->
-          <div class="path path-mobius" data-path-panel="mobius">
-            <p class="path-label mono">[ DIRECT USB ROUTING ]</p>
-            <ol class="flow">
-              <li class="node">
-                <span class="node-step mono">00</span>
-                <div><strong>FLAC File</strong><span class="mono">96kHz / 24-bit Audio Source</span></div>
-              </li>
-              <li class="node node-good">
-                <span class="node-step mono">01</span>
-                <div><strong>Rust Audio Engine</strong><span class="mono">LOCAL DECODING INTO PCM MEMORY</span></div>
-              </li>
-              <li class="node node-good">
-                <span class="node-step mono">02</span>
-                <div><strong>Isochronous USB Stream</strong><span class="mono">DIRECT USER-SPACE TRANSFER VIA
-                    LIBUSB</span></div>
-              </li>
-              <li class="node node-end-good">
-                <span class="node-step mono">03</span>
-                <div><strong>USB DAC Endpoint</strong><span class="mono">RECEIVES PCM AT TRACK NATIVE SAMPLE RATE</span>
-                </div>
-              </li>
-            </ol>
-            <div class="path-result mono"><span class="dot dot-amber"></span> OUTPUT: 96kHz / 24-bit DIRECT TRANSFER TO
-              DAC</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>VID:PID</th>
+                  <th>Max Spec</th>
+                  <th>HW Vol</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dac-table-body">
+                <tr>
+                  <td colspan="5" class="table-empty">Loading DAC list...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="surface">
+          <h3>Submit DAC Profile Dump</h3>
+          <p class="muted-note">
+            In Mobius on Android, open <strong>Settings → USB DAC → Dump / Send DAC Profile (JSON)</strong>. You can send directly from the app or paste the JSON here.
+          </p>
+
+          <form
+            id="dac-report-form"
+            action="/api/dac-report"
+            method="POST"
+            toolname="submit_dac_profile_dump"
+            tooldescription="Submit a Mobius Music USB DAC JSON profile dump to report hardware compatibility or request a driver quirk."
+          >
+            <div class="field">
+              <label for="dac-symptom">Observed Issue</label>
+              <select
+                id="dac-symptom"
+                name="symptom"
+                class="input"
+                toolparamdescription="Observed issue: fallback_aaudio, no_sound, glitch, wrong_pitch, or hw_volume_broken"
+              >
+                <option value="fallback_aaudio">Fallback to AAudio</option>
+                <option value="no_sound">No Sound / Silent Output</option>
+                <option value="glitch">Glitch / Clicks / Crackling</option>
+                <option value="wrong_pitch">Wrong Pitch / Speed</option>
+                <option value="hw_volume_broken">Hardware Volume Not Working</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dac-email">Reply Email (Optional)</label>
+              <input
+                id="dac-email"
+                name="email"
+                type="email"
+                class="input"
+                placeholder="you@example.com"
+                toolparamdescription="Optional email address to notify when a quirk or fix is released"
+              />
+            </div>
+
+            <div class="field">
+              <label for="dac-json-input">DAC Profile JSON</label>
+              <textarea
+                id="dac-json-input"
+                name="dac_json"
+                rows="5"
+                required
+                class="input mono-input"
+                placeholder='{"schema_version":1,"device":{"vid":"0x....","pid":"0x...."},"topology":{...}}'
+                toolparamdescription="Raw schema_version 1 JSON dump generated by Mobius Settings -> USB DAC -> Dump / Send DAC Profile"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full" id="dac-submit-btn">Submit DAC Dump</button>
+            <p id="dac-form-status" class="form-status" role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="support-links">
+            <a href="mailto:dacreportmobius@gmail.com">dacreportmobius@gmail.com</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">Telegram Community</a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============================================================
-         SECTION 5: DAC COMPATIBILITY & DIAGNOSTIC HUB
-         ============================================================ -->
-    <section class="section panel" id="dac-hub">
-      <div class="container">
-        <div class="section-head">
-          <p class="eyebrow mono reveal">[ 03 // DAC COMPATIBILITY &amp; DIAGNOSTIC HUB ]</p>
-          <h2 class="section-title reveal">Verified USB DAC Matrix &amp; Profile Submission</h2>
-          <p class="section-lead reveal">Search tested USB Audio DACs or submit a DAC Profile JSON dump from Settings
-            &rarr; USB DAC so driver quirks can be added cleanly.</p>
+    <!-- Free vs Studio License -->
+    <section class="section container" id="studio">
+      <div class="section-header">
+        <div>
+          <h2>Free Core &amp; Mobius Studio License</h2>
+          <p class="section-sub">Bit-perfect playback stays free for everyone. Studio is a one-time lifetime unlock for Android (up to 3 devices).</p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="surface">
+          <div class="tier-head">
+            <h3>Core Player</h3>
+            <span class="tier-price">Free</span>
+          </div>
+          <ul class="feature-list">
+            <li>Offline library indexing (FLAC, WAV, ALAC, MP3, AAC, Opus)</li>
+            <li>Direct UAC2 / UAC1 USB DAC bit-perfect output on Android</li>
+            <li>CoreAudio native sample-rate switching on macOS</li>
+            <li>Synced LRC lyrics &amp; static share cards</li>
+            <li>2 free preview exports of 9:16 Ambient Video Share</li>
+          </ul>
         </div>
 
-        <div class="dac-hub-grid">
-          <!-- DAC Compatibility Matrix -->
-          <article class="card dac-matrix-card reveal">
-            <div class="dac-matrix-head">
-              <p class="card-index mono">[ TESTED HARDWARE ]</p>
-              <label for="dac-search-input" class="sr-only">Filter DACs by name, VID/PID, or protocol</label>
-              <input id="dac-search-input" type="search" class="dac-input mono"
-                placeholder="Search DAC, VID:PID, or UAC1/UAC2..." autocomplete="off" />
-            </div>
-
-            <div class="dac-table-wrap">
-              <table class="dac-table">
-                <thead>
-                  <tr class="mono">
-                    <th>Device</th>
-                    <th>VID:PID</th>
-                    <th>Max Spec</th>
-                    <th>HW Vol</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="dac-table-body">
-                  <tr>
-                    <td colspan="5" class="mono dac-empty">Loading DAC compatibility list...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </article>
-
-          <!-- Declarative WebMCP DAC Dump Form -->
-          <article class="card dac-form-card reveal">
-            <p class="card-index mono">[ DIAGNOSTIC UPLOAD // WEBMCP ]</p>
-            <h3>Submit DAC Profile Dump</h3>
-            <p class="dac-form-lead">In Mobius on Android, open <strong>Settings &rarr; USB DAC &rarr; Dump / Send DAC
-                Profile (JSON)</strong>. You can submit directly from the app or paste the JSON dump below.</p>
-
-            <form id="dac-report-form" action="/api/dac-report" method="POST" toolname="submit_dac_profile_dump"
-              tooldescription="Submit a Mobius Music USB DAC JSON profile dump to report hardware compatibility or request a driver quirk.">
-              <div class="dac-field">
-                <label for="dac-symptom" class="mono">Symptom</label>
-                <select id="dac-symptom" name="symptom" class="dac-input"
-                  toolparamdescription="Observed issue: fallback_aaudio, no_sound, glitch, wrong_pitch, or hw_volume_broken">
-                  <option value="fallback_aaudio">Fallback to AAudio</option>
-                  <option value="no_sound">No Sound / Silent Output</option>
-                  <option value="glitch">Glitch / Clicks / Crackling</option>
-                  <option value="wrong_pitch">Wrong Pitch / Playback Speed</option>
-                  <option value="hw_volume_broken">Hardware Volume Not Working</option>
-                </select>
-              </div>
-
-              <div class="dac-field">
-                <label for="dac-email" class="mono">Reply Email (Optional)</label>
-                <input id="dac-email" name="email" type="email" class="dac-input" placeholder="you@example.com"
-                  toolparamdescription="Optional email address to notify when the DAC quirk or fix is released" />
-              </div>
-
-              <div class="dac-field">
-                <label for="dac-json-input" class="mono">DAC Profile JSON Dump</label>
-                <textarea id="dac-json-input" name="dac_json" rows="6" required class="dac-input dac-textarea mono"
-                  placeholder='{"schema_version":1,"device":{"vid":"0x....","pid":"0x...."},"topology":{...}}'
-                  toolparamdescription="Raw schema_version 1 JSON dump generated by Mobius Settings -> USB DAC -> Dump / Send DAC Profile"></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-primary btn-block" id="dac-submit-btn">
-                Submit DAC Dump
-              </button>
-              <p id="dac-form-status" class="dac-form-status mono" role="status" aria-live="polite"></p>
-            </form>
-
-            <div class="dac-support-links mono">
-              <span>Direct Support:</span>
-              <a class="chip" href="mailto:dacreportmobius@gmail.com">[ EMAIL: dacreportmobius@gmail.com ]</a>
-              <a class="chip" href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">[ TELEGRAM CHANNEL ↗
-                ]</a>
-            </div>
-          </article>
+        <div class="surface surface-accent">
+          <div class="tier-head">
+            <h3>Mobius Studio</h3>
+            <span class="tier-price">Lifetime</span>
+          </div>
+          <ul class="feature-list">
+            <li>10-Band 64-bit Parametric EQ (RBJ Biquad) + Auto-Preamp</li>
+            <li>One-tap AutoEQ headphone &amp; IEM <code>.txt</code> importer</li>
+            <li>Mobius Tone Matrix (8-band macro psychoacoustic shaping)</li>
+            <li>Unlimited 1080p 9:16 Adaptive Ambient Video Share</li>
+            <li>1 license key activates up to 3 devices &amp; works 100% offline</li>
+          </ul>
+          <a
+            href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-primary btn-full"
+          >
+            Buy Lifetime License
+          </a>
+          <p class="policy-note">
+            <strong>Terms &amp; Refunds:</strong> Instant license delivery via Lemon Squeezy. Full refund available within 14 days by emailing
+            <a href="mailto:dacreportmobius@gmail.com">dacreportmobius@gmail.com</a>.
+          </p>
         </div>
       </div>
     </section>
 
-    <!-- ============================================================
-         SECTION 6: DOWNLOAD, INTEGRITY & COMMUNITY SUPPORT
-         ============================================================ -->
-    <section class="section panel panel-deep" id="download">
-      <div class="container" id="specs">
-        <div class="section-head">
-          <p class="eyebrow mono reveal"><span class="dot dot-amber"></span> [ 04 // DOWNLOAD &amp; SPECS ]</p>
-          <h2 class="section-title reveal">Direct USB Bit-Perfect. Built for Offline Libraries.</h2>
-          <p class="section-lead reveal">Direct UAC2 hardware access and local playback are free with zero ads or
-            accounts. Download the standalone build below.</p>
+    <!-- Download & Integrity -->
+    <section class="section container" id="download">
+      <div class="surface download-card">
+        <div class="download-main">
+          <p class="eyebrow">Android Release · v2.0.1</p>
+          <h2>Download Mobius Music</h2>
+          <p class="muted-note">Android 9.0+ (arm64-v8a) · 78.8 MB · No Root Required · Sideload APK</p>
+
+          <div class="checksum-box">
+            <span class="checksum-label">SHA-256</span>
+            <code class="checksum-code">792a3540429148625241f117dd495b02b89344c195bc32c23292216045c5f68a</code>
+            <button
+              type="button"
+              class="btn btn-sm btn-secondary"
+              data-copy="792a3540429148625241f117dd495b02b89344c195bc32c23292216045c5f68a"
+            >
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
         </div>
 
-        <div class="cta-grid">
-          <!-- Card: Download APK -->
-          <article class="card card-download reveal">
-            <p class="card-index mono">[ TECH SPECS: DOWNLOAD &amp; INTEGRITY ]</p>
-            <h3>app-release.apk</h3>
-
-            <dl class="spec-list mono">
-              <div>
-                <dt>FILE SIZE</dt>
-                <dd>~56 MB</dd>
-              </div>
-              <div>
-                <dt>OS REQUIREMENTS</dt>
-                <dd>Android 9.0 (Pie) or newer</dd>
-              </div>
-              <div>
-                <dt>HARDWARE</dt>
-                <dd>USB OTG + USB DAC</dd>
-              </div>
-              <div>
-                <dt>PERMISSIONS</dt>
-                <dd>No Root Required</dd>
-              </div>
-            </dl>
-
-            <div class="checksum">
-              <span class="checksum-label mono">SHA-256 CHECKSUM</span>
-              <button class="checksum-value mono" type="button"
-                data-copy="666a7b5d47bd791d2b080bf1ac80b85ab4efe515e384cb7d8e8ce9bb9dcc8881"
-                aria-label="Copy SHA-256 checksum">
-                <span class="checksum-text">[ 666a7b5d47bd791d2b080bf1ac80b85ab4efe515e384cb7d8e8ce9bb9dcc8881 ]</span>
-                <span class="checksum-action" data-copy-label>COPY</span>
-              </button>
-            </div>
-
-            <a class="btn btn-primary btn-block"
-              href="https://github.com/LortBree/mobius-music-releases/releases/download/Release/app-release.apk"
-              target="_blank" rel="noopener">
-              Download APK (Direct)
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 4v12m0 0-5-5m5 5 5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg>
-            </a>
-          </article>
-
-          <!-- Card: Support Development -->
-          <article class="card card-support reveal" id="support">
-            <p class="card-index mono">[ SUPPORT INDIE DEVELOPMENT ]</p>
-            <h3>Support Ongoing Development.</h3>
-            <p class="support-text">Mobius is an independent project built for offline music listening on Android and
-              macOS, without ads, tracking, or subscription paywalls. If you find the app useful, you can support
-              ongoing development here.</p>
-
-            <!-- Contribution Tiers -->
-            <div class="support-tiers">
-              <div class="tier-item">
-                <span class="tier-val">10k</span>
-                <span class="tier-name">Coffee Tier</span>
-              </div>
-              <div class="tier-item">
-                <span class="tier-val">25k</span>
-                <span class="tier-name">Supporter Tier</span>
-              </div>
-              <div class="tier-item">
-                <span class="tier-val">50k</span>
-                <span class="tier-name">Patron Tier</span>
-              </div>
-            </div>
-
-            <div class="support-actions">
-              <a class="btn btn-primary btn-block" href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0" target="_blank" rel="noopener">
-                Buy Mobius Studio Lifetime License (up to 3 devices)
-              </a>
-              <a class="btn btn-ghost btn-block" href="https://saweria.co/LortBree" target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Zm13 1h1.5a2.5 2.5 0 0 1 0 5H17M8 2.5v3M11.5 2.5v3"
-                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                Support via Saweria
-              </a>
-              <a class="btn btn-ghost btn-block" href="https://github.com/LortBree/mobius-music-releases"
-                target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                    fill="currentColor" />
-                </svg>
-                Star on GitHub
-              </a>
-            </div>
-            <p class="dac-form-lead"><strong>Terms &amp; Refunds:</strong> Core playback and Direct UAC2 bit-perfect USB DAC output are free. Mobius Studio Lifetime License unlocks 64-bit Studio DSP and unlimited 9:16 Video Share on up to 3 devices. Full refund available within 14 days via <a href="mailto:dacreportmobius@gmail.com">dacreportmobius@gmail.com</a>.</p>
-
-            <div class="community" id="community">
-              <p class="card-index mono">[ COMMUNITY &amp; FEEDBACK ]</p>
-              <p>Have feedback, found a bug, or tested a DAC? Let us know.</p>
-              <div class="community-links">
-                <a class="chip mono" href="mailto:dacreportmobius@gmail.com">[ GMAIL ↗ ]</a>
-                <a class="chip mono" href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">[ TELEGRAM ↗
-                  ]</a>
-                <a class="chip mono" href="https://github.com/LortBree/mobius-music-releases" target="_blank"
-                  rel="noopener">[ GITHUB ↗ ]</a>
-              </div>
-            </div>
-          </article>
+        <div class="download-cta">
+          <a
+            class="btn btn-primary btn-full"
+            href="https://github.com/LortBree/mobius-music-releases/releases/download/Release/app-release.apk"
+            target="_blank"
+            rel="noopener"
+          >
+            Download APK (78.8 MB)
+          </a>
+          <a
+            class="btn btn-secondary btn-full"
+            href="https://github.com/LortBree/mobius-music-releases"
+            target="_blank"
+            rel="noopener"
+          >
+            GitHub Releases
+          </a>
         </div>
-
-        <blockquote class="closing-quote reveal">
-          <p>“A focused, private music player built for local libraries and external audio hardware.”</p>
-        </blockquote>
       </div>
     </section>
   </main>
 
-  <!-- ============================================================
-       FOOTER: CHECKSUM / VERSION BUILD / SOCIAL / LICENSE
-       ============================================================ -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <a href="#top" class="nav-brand">
-          <img src="assets/icons/mobi%20white.svg?v=3" class="brand-logo-img" alt="Mobius Logo" width="28"
-            height="28" />
-          <span>MOBIUS MUSIC</span>
-        </a>
-        <p class="footer-tag">Offline music player for Android and macOS.</p>
-      </div>
-
-      <div class="footer-grid mono">
-        <div>
-          <span class="footer-key">CHECKSUM (SHA-256)</span>
-          <button type="button" class="footer-hash"
-            data-copy="666a7b5d47bd791d2b080bf1ac80b85ab4efe515e384cb7d8e8ce9bb9dcc8881"
-            aria-label="Copy SHA-256 checksum">666a7b5d…9dcc8881 <span data-copy-label>COPY</span></button>
-        </div>
-        <div>
-          <span class="footer-key">VERSION BUILD</span>
-          <span>v2.0.1 · build 2026.11</span>
-        </div>
-        <div>
-          <span class="footer-key">SOCIAL</span>
-          <span class="footer-links">
-            <a href="mailto:dacreportmobius@gmail.com">GMAIL</a>
-            <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">TELEGRAM</a>
-            <a href="https://github.com/LortBree/mobius-music-releases" target="_blank" rel="noopener">GITHUB</a>
-          </span>
-        </div>
-        <div>
-          <span class="footer-key">LICENSE</span>
-          <span>Freeware · No Ads · &copy; <span data-year>2026</span> Mobius ECHO - LortBree</span>
-        </div>
-      </div>
-
-      <p class="footer-bottom mono">[ x(u,v) = (1 + v/2·cos(u/2))·cos(u) ] &nbsp; Mobius Music &nbsp; Built with Flutter
-        and Rust.</p>
+  <footer class="footer container">
+    <span>&copy; <span data-year>2026</span> Mobius Music</span>
+    <div class="footer-links">
+      <a href="mailto:dacreportmobius@gmail.com">Email Support</a>
+      <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://github.com/LortBree/mobius-music-releases" target="_blank" rel="noopener">GitHub</a>
     </div>
   </footer>
 
-  <!-- macOS Desktop Atmospheric Ambient Glow Script -->
-  <script src="js/ambient-background.js?v=7" defer></script>
-  <!-- Main UI & Interactive Telemetry -->
-  <script src="js/main.js?v=7" defer></script>
+  <script src="js/main.js?v=8" defer></script>
 </body>
-
 </html>
