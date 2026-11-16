@@ -6,8 +6,8 @@
   <title>Mobius Music — Offline Hi-Res Player &amp; Direct USB DAC Audio</title>
   <meta name="description" content="Offline hi-res music player for Android and macOS with a Rust audio engine, Direct UAC2 USB DAC passthrough, 64-bit Studio DSP, and 9:16 audio-synced share cards." />
   <meta name="theme-color" content="#09090D" />
-  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=10" />
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=11" />
+  <link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
   <header class="topbar">
@@ -16,7 +16,6 @@
 
       <nav class="nav-links" aria-label="Primary">
         <a href="#signal-path">Signal</a>
-        <a href="#study">Clocking</a>
         <a href="#studio">Studio</a>
         <a href="#dac-hub">DAC Matrix</a>
       </nav>
@@ -26,196 +25,78 @@
   </header>
 
   <main id="top">
-    <!-- 1. Hero -->
+    <!-- Hero -->
     <section class="hero" aria-label="Introduction">
-      <div class="hero-copy">
-        <p class="mono-label">Android &amp; macOS · v2.0.2</p>
-        <h1 class="hero-title">
-          Offline hi-res audio with <em>bit-perfect</em> USB DAC routing.
-        </h1>
-        <p class="hero-lede">
-          Decoding, resampling policy, and 64-bit DSP run in native Rust outside the UI thread.
-          Connect a UAC1 or UAC2 USB DAC on Android to bypass the system mixer at native sample rates.
-        </p>
-        <div class="hero-actions">
-          <a href="#download" class="btn-square btn-solid">Download APK</a>
-          <a href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0" target="_blank" rel="noopener" class="btn-square">Studio License</a>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="mono-label">Android &amp; macOS · v2.0.2</p>
+          <h1 class="hero-title">
+            Offline hi-res audio with <em>bit-perfect</em> USB DAC routing.
+          </h1>
+          <p class="hero-lede">
+            Decoding, resampling policy, and 64-bit DSP run in native Rust outside the UI thread.
+            Connect a UAC1 or UAC2 USB DAC on Android to bypass the system mixer at native sample rates.
+          </p>
+          <div class="hero-actions">
+            <a href="#download" class="btn-square btn-solid">Download APK</a>
+            <a
+              href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0"
+              target="_blank"
+              rel="noopener"
+              class="btn-square"
+            >
+              Studio License
+            </a>
+          </div>
         </div>
+
+        <img
+          src="assets/icons/mobi%20white.svg?v=11"
+          alt="Mobius Music"
+          class="hero-subject"
+          width="200"
+          height="200"
+        />
       </div>
-
-      <p class="hero-caption">Direct UAC2 · 64-Bit Core · Zero Accounts</p>
-
-      <div class="hero-wordmark" aria-hidden="true">
-        <span class="wm-upper">MOBIUS</span>
-        <span class="wm-lower">MUSIC</span>
-      </div>
-
-      <img
-        src="assets/icons/mobi%20white.svg?v=10"
-        alt=""
-        class="hero-subject"
-        aria-hidden="true"
-      />
     </section>
 
-    <!-- 2. Section Drawing: Scale USB Audio Architecture -->
+    <!-- Signal Path -->
     <section class="section container" id="signal-path">
-      <div class="drawing-grid">
-        <div class="drawing-prose">
+      <div class="signal-grid">
+        <div>
           <h2 class="section-title">Direct hardware <em>routing</em> without mixer resampling.</h2>
           <p class="body-mono">
             Standard Android playback routes streams through AudioFlinger and resamples to the system mixer clock.
             Mobius claims the USB Audio Class streaming interface in user space via libusb and streams PCM frames directly to the DAC endpoint.
           </p>
-
-          <dl class="ruled-dl">
-            <div>
-              <dt>01 / DECODE</dt>
-              <dd class="dl-desc">Symphonia lossless FLAC, WAV, ALAC, MP3, Opus</dd>
-              <dd class="dl-val">i32 PCM</dd>
-            </div>
-            <div>
-              <dt>02 / DSP CORE</dt>
-              <dd class="dl-desc">Bypassed in Bit-Perfect; 10-band RBJ biquad in Studio</dd>
-              <dd class="dl-val">64-bit f64</dd>
-            </div>
-            <div>
-              <dt>03 / BUS TIMING</dt>
-              <dd class="dl-desc">High-speed USB 2.0 isochronous microframes</dd>
-              <dd class="dl-val">125 µs</dd>
-            </div>
-            <div>
-              <dt>04 / FEEDBACK</dt>
-              <dd class="dl-desc">Asynchronous IN endpoint Q16.16 clock master lock</dd>
-              <dd class="dl-val">EP 0x85</dd>
-            </div>
-          </dl>
         </div>
 
-        <figure class="drawing-figure">
-          <svg viewBox="0 0 520 360" class="scale-svg" role="img" aria-label="To-scale 1.000 ms USB 2.0 High-Speed UAC2 isochronous frame timing diagram">
-            <!-- Construction grid (0.125 ms per microframe, 8 microframes = 1.000 ms) -->
-            <g class="svg-construction">
-              <line x1="60" y1="60" x2="60" y2="270" />
-              <line x1="110" y1="60" x2="110" y2="270" />
-              <line x1="160" y1="60" x2="160" y2="270" />
-              <line x1="210" y1="60" x2="210" y2="270" />
-              <line x1="260" y1="60" x2="260" y2="270" />
-              <line x1="310" y1="60" x2="310" y2="270" />
-              <line x1="360" y1="60" x2="360" y2="270" />
-              <line x1="410" y1="60" x2="410" y2="270" />
-              <line x1="460" y1="60" x2="460" y2="270" />
-              <line x1="60" y1="130" x2="460" y2="130" />
-              <line x1="60" y1="220" x2="460" y2="220" />
-            </g>
-
-            <!-- Scale bar: 1.000 ms = 400 px (50 px = 125 us microframe) -->
-            <g class="svg-leader">
-              <line x1="60" y1="42" x2="460" y2="42" />
-              <line x1="60" y1="36" x2="60" y2="48" />
-              <line x1="460" y1="36" x2="460" y2="48" />
-              <line x1="60" y1="295" x2="110" y2="295" />
-              <line x1="60" y1="289" x2="60" y2="301" />
-              <line x1="110" y1="289" x2="110" y2="301" />
-              <!-- Leader to feedback marker -->
-              <polyline points="260,220 290,260 336,260" fill="none" />
-              <!-- Leader to SOF -->
-              <polyline points="60,130 34,92 18,92" fill="none" />
-            </g>
-
-            <!-- Heavy primary signal geometry -->
-            <g class="svg-geometry">
-              <!-- SOF pulses -->
-              <line x1="60" y1="74" x2="60" y2="130" />
-              <line x1="460" y1="74" x2="460" y2="130" />
-              <!-- 8 Isochronous OUT packets (12 frames @ 96 kHz = 72 B/uFrame) -->
-              <rect x="64" y="102" width="42" height="28" fill="none" />
-              <rect x="114" y="102" width="42" height="28" fill="none" />
-              <rect x="164" y="102" width="42" height="28" fill="none" />
-              <rect x="214" y="102" width="42" height="28" fill="none" />
-              <rect x="264" y="102" width="42" height="28" fill="none" />
-              <rect x="314" y="102" width="42" height="28" fill="none" />
-              <rect x="364" y="102" width="42" height="28" fill="none" />
-              <rect x="414" y="102" width="42" height="28" fill="none" />
-              <!-- Asynchronous Feedback IN packet at 4 uFrame cadence -->
-              <rect x="252" y="196" width="16" height="24" fill="none" />
-              <rect x="452" y="196" width="16" height="24" fill="none" />
-            </g>
-
-            <!-- Pigment markers (points & ticks only, never large fills) -->
-            <g class="svg-pigment">
-              <circle cx="60" cy="130" r="3" />
-              <circle cx="260" cy="220" r="3.5" />
-              <circle cx="460" cy="130" r="3" />
-              <line x1="64" y1="102" x2="106" y2="102" stroke-width="2" />
-            </g>
-
-            <!-- Monospace scale annotations -->
-            <g class="svg-text">
-              <text x="260" y="28" text-anchor="middle">1 USB FRAME = 1.000 MS (8 × 125 µS)</text>
-              <text x="16" y="86" text-anchor="end">SOF</text>
-              <text x="64" y="152">OUT EP (96 KHZ / 24-BIT = 12 FRAMES / µF)</text>
-              <text x="342" y="264">FB IN Q16.16</text>
-              <text x="85" y="318" text-anchor="middle">125 µS</text>
-              <text x="460" y="318" text-anchor="end">SCALE 1:1 TIMEBASE</text>
-            </g>
-          </svg>
-        </figure>
-      </div>
-    </section>
-
-    <!-- 3. Pinned Study: Computed Ring-Buffer & Clock Drift Model -->
-    <section class="pinned-study" id="study">
-      <div class="pinned-stage container">
-        <div class="study-head">
-          <p class="mono-label">Pinned Study · UAC2 Isochronous Ring Model</p>
-          <h2 class="section-title">Clock <em>feedback</em> vs queue depth.</h2>
-        </div>
-
-        <div class="study-visual">
-          <svg viewBox="0 0 420 220" class="study-svg" role="img" aria-label="Arc diagram mapping ring buffer occupancy to computed USB queue latency">
-            <!-- Construction baseline & tick marks -->
-            <g class="svg-construction">
-              <line x1="40" y1="190" x2="380" y2="190" />
-              <line x1="210" y1="30" x2="210" y2="190" />
-              <path d="M 60 190 A 150 150 0 0 1 360 190" fill="none" />
-            </g>
-            <!-- Real semicircle arc (R = 150, center = 210,190) -->
-            <path d="M 60 190 A 150 150 0 0 1 360 190" fill="none" class="svg-arc" />
-            <line id="study-radius" x1="210" y1="190" x2="210" y2="40" class="svg-leader-line" />
-            <circle cx="210" cy="190" r="3" class="svg-pigment" />
-            <circle id="study-marker" cx="210" cy="40" r="5" class="svg-pigment" />
-
-            <g class="svg-text">
-              <text x="60" y="208" text-anchor="middle">0% / 64 MS</text>
-              <text x="210" y="208" text-anchor="middle">50% NOMINAL</text>
-              <text x="360" y="208" text-anchor="middle">100% / 512 MS</text>
-            </g>
-          </svg>
-        </div>
-
-        <dl class="readout-row" aria-live="polite">
+        <dl class="ruled-dl">
           <div>
-            <dt>Queue Transfers</dt>
-            <dd id="ro-transfers">144 × 2 ms</dd>
+            <dt>01 / DECODE</dt>
+            <dd class="dl-desc">Symphonia lossless FLAC, WAV, ALAC, MP3, Opus</dd>
+            <dd class="dl-val">i32 PCM</dd>
           </div>
           <div>
-            <dt>Buffer Window</dt>
-            <dd id="ro-latency">288.0 ms</dd>
+            <dt>02 / DSP CORE</dt>
+            <dd class="dl-desc">Bypassed in Bit-Perfect; 10-band RBJ biquad in Studio</dd>
+            <dd class="dl-val">64-bit f64</dd>
           </div>
           <div>
-            <dt>96 kHz Nominal</dt>
-            <dd id="ro-nominal">12.000 f/µF</dd>
+            <dt>03 / BUS TIMING</dt>
+            <dd class="dl-desc">High-speed USB 2.0 isochronous microframes</dd>
+            <dd class="dl-val">125 µs</dd>
           </div>
           <div>
-            <dt>Arc Angle θ</dt>
-            <dd id="ro-angle">90.0°</dd>
+            <dt>04 / FEEDBACK</dt>
+            <dd class="dl-desc">Asynchronous IN endpoint Q16.16 clock master lock</dd>
+            <dd class="dl-val">EP 0x85</dd>
           </div>
         </dl>
       </div>
     </section>
 
-    <!-- 4. Material & Practice: Free Core vs Studio License -->
+    <!-- Free Core vs Studio License -->
     <section class="section container" id="studio">
       <div class="section-header">
         <h2 class="section-title">Core playback stays <em>free</em>; Studio funds development.</h2>
@@ -279,7 +160,7 @@
       </div>
     </section>
 
-    <!-- 5. Work Table: USB DAC Matrix & Profile Dump -->
+    <!-- USB DAC Matrix & Diagnostic Dump -->
     <section class="section container" id="dac-hub">
       <div class="table-header-row">
         <div>
@@ -387,7 +268,7 @@
       </div>
     </section>
 
-    <!-- 6. Close -->
+    <!-- Download & Footer -->
     <section class="close-band" id="download">
       <div class="container">
         <div class="close-grid">
@@ -437,11 +318,9 @@
           </div>
         </footer>
       </div>
-
-      <div class="close-wordmark" aria-hidden="true">MOBIUS</div>
     </section>
   </main>
 
-  <script src="js/main.js?v=10" defer></script>
+  <script src="js/main.js?v=11" defer></script>
 </body>
 </html>

@@ -4,60 +4,7 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
-  // 1. Pinned Study: travel marker along real semicircle arc (R=150, C=(210,190))
-  const studySection = $('#study');
-  const studyMarker = $('#study-marker');
-  const studyRadius = $('#study-radius');
-  const roTransfers = $('#ro-transfers');
-  const roLatency = $('#ro-latency');
-  const roNominal = $('#ro-nominal');
-  const roAngle = $('#ro-angle');
-
-  const updatePinnedStudy = () => {
-    if (!studySection || !studyMarker || !studyRadius) return;
-    const rect = studySection.getBoundingClientRect();
-    const scrollable = Math.max(1, studySection.offsetHeight - window.innerHeight);
-    const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
-
-    // Arc angle from pi (left = 0%) to 0 (right = 100%)
-    const thetaDeg = progress * 180;
-    const thetaRad = (1 - progress) * Math.PI;
-    const cx = 210 + 150 * Math.cos(thetaRad);
-    const cy = 190 - 150 * Math.sin(thetaRad);
-
-    studyMarker.setAttribute('cx', cx.toFixed(1));
-    studyMarker.setAttribute('cy', cy.toFixed(1));
-    studyRadius.setAttribute('x2', cx.toFixed(1));
-    studyRadius.setAttribute('y2', cy.toFixed(1));
-
-    // Exact uac2_driver transfer math: 32..256 transfers * 2 ms = 64..512 ms
-    const transfers = Math.round(32 + progress * (256 - 32));
-    const latencyMs = transfers * 2.0;
-    // 96 kHz / 8000 microframes/s = 12.000 frames/uFrame; +/- 0.15% drift across occupancy
-    const driftFactor = 1 + (progress - 0.5) * 0.003;
-    const framesPerUf = 12.0 * driftFactor;
-
-    if (roTransfers) roTransfers.textContent = `${transfers} × 2 ms`;
-    if (roLatency) roLatency.textContent = `${latencyMs.toFixed(1)} ms`;
-    if (roNominal) roNominal.textContent = `${framesPerUf.toFixed(3)} f/µF`;
-    if (roAngle) roAngle.textContent = `${thetaDeg.toFixed(1)}°`;
-  };
-
-  if (studySection) {
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updatePinnedStudy();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-    updatePinnedStudy();
-  }
-
-  // 2. Copy SHA-256 checksum
+  // 1. Copy SHA-256 checksum
   const copyText = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
