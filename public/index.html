@@ -6,13 +6,23 @@
   <title>Mobius Music — Offline Hi-Res Player &amp; Direct USB DAC Audio</title>
   <meta name="description" content="Offline hi-res music player for Android and macOS with a Rust audio engine, Direct UAC2 USB DAC passthrough, 64-bit Studio DSP, and 9:16 audio-synced share cards." />
   <meta name="theme-color" content="#09090D" />
-  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=11" />
-  <link rel="stylesheet" href="styles.css?v=11" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/mobi%20white.svg?v=12" />
+  <link rel="stylesheet" href="styles.css?v=12" />
 </head>
 <body>
+  <!-- Lightweight CSS-only Mobius ambient shader wash (zero WebGL / zero JS loop) -->
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="ambient-field field-violet"></span>
+    <span class="ambient-field field-magenta"></span>
+    <span class="ambient-field field-blue"></span>
+  </div>
+
   <header class="topbar">
     <div class="topbar-inner">
-      <a href="#top" class="wordmark-nav" aria-label="Mobius Music home">Mobius<span class="pigment">.</span></a>
+      <a href="#top" class="brand" aria-label="Mobius Music home">
+        <img src="assets/icons/mobi%20white.svg?v=12" width="24" height="24" alt="" />
+        <span>Mobius</span>
+      </a>
 
       <nav class="nav-links" aria-label="Primary">
         <a href="#signal-path">Signal</a>
@@ -20,307 +30,390 @@
         <a href="#dac-hub">DAC Matrix</a>
       </nav>
 
-      <a href="#download" class="btn-square">Download v2.0.2</a>
+      <a href="#download" class="btn btn-primary btn-sm">Download v2.0.2</a>
     </div>
   </header>
 
   <main id="top">
     <!-- Hero -->
-    <section class="hero" aria-label="Introduction">
-      <div class="container hero-grid">
+    <section class="hero container" aria-label="Introduction">
+      <div class="hero-grid">
         <div class="hero-copy">
-          <p class="mono-label">Android &amp; macOS · v2.0.2</p>
+          <div class="status-pill">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>Android &amp; macOS · v2.0.2</span>
+          </div>
           <h1 class="hero-title">
-            Offline hi-res audio with <em>bit-perfect</em> USB DAC routing.
+            Offline hi-res audio with <span class="accent-text">bit-perfect</span> USB DAC routing.
           </h1>
           <p class="hero-lede">
             Decoding, resampling policy, and 64-bit DSP run in native Rust outside the UI thread.
             Connect a UAC1 or UAC2 USB DAC on Android to bypass the system mixer at native sample rates.
           </p>
           <div class="hero-actions">
-            <a href="#download" class="btn-square btn-solid">Download APK</a>
+            <a href="#download" class="btn btn-primary">Download APK</a>
             <a
               href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0"
               target="_blank"
               rel="noopener"
-              class="btn-square"
+              class="btn btn-tinted"
             >
               Studio License
             </a>
           </div>
         </div>
 
-        <img
-          src="assets/icons/mobi%20white.svg?v=11"
-          alt="Mobius Music"
-          class="hero-subject"
-          width="200"
-          height="200"
-        />
+        <!-- Hardware Output Card styled after Mobius Settings -> USB DAC -->
+        <aside class="mobius-card hero-panel" aria-label="Mobius USB DAC engine summary">
+          <div class="panel-top">
+            <div class="icon-badge">
+              <img src="assets/icons/mobi%20white.svg?v=12" width="22" height="22" alt="" />
+            </div>
+            <div class="panel-title-group">
+              <strong>USB DAC (Bit-Perfect)</strong>
+              <span>Direct Isochronous UAC2 / UAC1</span>
+            </div>
+            <span class="badge badge-native">Native</span>
+          </div>
+
+          <div class="panel-divider"></div>
+
+          <ul class="mini-spec-list">
+            <li>
+              <span>Decode Pipeline</span>
+              <strong>i32 PCM · Symphonia</strong>
+            </li>
+            <li>
+              <span>AudioFlinger</span>
+              <strong>Bypassed via libusb</strong>
+            </li>
+            <li>
+              <span>Feedback Lock</span>
+              <strong>EP 0x85 · Q16.16</strong>
+            </li>
+            <li>
+              <span>Studio DSP</span>
+              <strong>64-bit f64 RBJ</strong>
+            </li>
+          </ul>
+        </aside>
       </div>
     </section>
 
     <!-- Signal Path -->
     <section class="section container" id="signal-path">
-      <div class="signal-grid">
-        <div>
-          <h2 class="section-title">Direct hardware <em>routing</em> without mixer resampling.</h2>
-          <p class="body-mono">
-            Standard Android playback routes streams through AudioFlinger and resamples to the system mixer clock.
-            Mobius claims the USB Audio Class streaming interface in user space via libusb and streams PCM frames directly to the DAC endpoint.
-          </p>
+      <div class="section-head">
+        <h2>Direct hardware routing without mixer resampling.</h2>
+        <p>
+          Standard Android playback routes streams through AudioFlinger and resamples to the system mixer clock.
+          Mobius claims the USB Audio Class interface in user space and streams PCM directly to your DAC.
+        </p>
+      </div>
+
+      <div class="spec-grid">
+        <div class="mobius-card spec-item">
+          <div class="icon-badge icon-badge-accent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <div class="spec-meta">
+            <div class="spec-top">
+              <strong>01 · Native Decode</strong>
+              <span class="badge badge-accent">i32 PCM</span>
+            </div>
+            <p>Symphonia decodes FLAC, WAV, ALAC, MP3, and Opus locally with zero cloud dependency.</p>
+          </div>
         </div>
 
-        <dl class="ruled-dl">
-          <div>
-            <dt>01 / DECODE</dt>
-            <dd class="dl-desc">Symphonia lossless FLAC, WAV, ALAC, MP3, Opus</dd>
-            <dd class="dl-val">i32 PCM</dd>
+        <div class="mobius-card spec-item">
+          <div class="icon-badge icon-badge-accent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6"/></svg>
           </div>
-          <div>
-            <dt>02 / DSP CORE</dt>
-            <dd class="dl-desc">Bypassed in Bit-Perfect; 10-band RBJ biquad in Studio</dd>
-            <dd class="dl-val">64-bit f64</dd>
+          <div class="spec-meta">
+            <div class="spec-top">
+              <strong>02 · Studio DSP Core</strong>
+              <span class="badge badge-accent">64-bit f64</span>
+            </div>
+            <p>Completely bypassed in Bit-Perfect mode; 10-band RBJ biquad EQ and Tone Matrix in Studio.</p>
           </div>
-          <div>
-            <dt>03 / BUS TIMING</dt>
-            <dd class="dl-desc">High-speed USB 2.0 isochronous microframes</dd>
-            <dd class="dl-val">125 µs</dd>
+        </div>
+
+        <div class="mobius-card spec-item">
+          <div class="icon-badge icon-badge-accent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
           </div>
-          <div>
-            <dt>04 / FEEDBACK</dt>
-            <dd class="dl-desc">Asynchronous IN endpoint Q16.16 clock master lock</dd>
-            <dd class="dl-val">EP 0x85</dd>
+          <div class="spec-meta">
+            <div class="spec-top">
+              <strong>03 · Isochronous Timing</strong>
+              <span class="badge badge-accent">125 µs</span>
+            </div>
+            <p>High-speed USB 2.0 microframe scheduling eliminates UI-thread jitter and buffer underruns.</p>
           </div>
-        </dl>
+        </div>
+
+        <div class="mobius-card spec-item">
+          <div class="icon-badge icon-badge-accent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2v6m0 8v6M4.93 4.93l4.24 4.24m5.66 5.66 4.24 4.24M2 12h6m8 0h6"/></svg>
+          </div>
+          <div class="spec-meta">
+            <div class="spec-top">
+              <strong>04 · Asynchronous Clock</strong>
+              <span class="badge badge-native">EP 0x85</span>
+            </div>
+            <p>DAC-driven Q16.16 IN endpoint feedback locks transfer pacing to the external oscillator.</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Free Core vs Studio License -->
+    <!-- Studio License -->
     <section class="section container" id="studio">
-      <div class="section-header">
-        <h2 class="section-title">Core playback stays <em>free</em>; Studio funds development.</h2>
-        <p class="body-mono">One-time lifetime key for Android (up to 3 devices). macOS remains unrestricted.</p>
+      <div class="section-head">
+        <h2>Core playback stays free. Studio unlocks mastering tools.</h2>
+        <p>One-time lifetime key for Android (up to 3 devices). macOS builds remain unrestricted.</p>
       </div>
 
-      <div class="ruled-list">
-        <div class="ruled-row">
-          <span class="row-tag">01 / CORE</span>
-          <span class="row-desc">Offline library indexing, synced LRC lyrics, Direct UAC2 / UAC1 USB DAC output</span>
-          <span class="row-class">Free</span>
-        </div>
-        <div class="ruled-row">
-          <span class="row-tag">02 / DSP</span>
-          <span class="row-desc">10-band 64-bit Parametric EQ (RBJ biquad) with automatic anti-clipping preamp</span>
-          <span class="row-class">Studio</span>
-        </div>
-        <div class="ruled-row">
-          <span class="row-tag">03 / AUTOEQ</span>
-          <span class="row-desc">EqualizerAPO / AutoEQ ParametricEQ.txt headphone &amp; IEM profile importer</span>
-          <span class="row-class">Studio</span>
-        </div>
-        <div class="ruled-row">
-          <span class="row-tag">04 / MATRIX</span>
-          <span class="row-desc">Mobius Tone Matrix 8-band psychoacoustic macro shaping (-100 to +100)</span>
-          <span class="row-class">Studio</span>
-        </div>
-        <div class="ruled-row">
-          <span class="row-tag">05 / SHARE</span>
-          <span class="row-desc">9:16 adaptive ambient floating-card MP4 export (2 free previews, unlimited in Studio)</span>
-          <span class="row-class">Studio</span>
-        </div>
-      </div>
+      <div class="mobius-card studio-shell">
+        <div class="studio-pillars">
+          <div class="pillar-row">
+            <div class="pillar-text">
+              <strong>Offline Library, LRC Lyrics &amp; Bit-Perfect USB DAC</strong>
+              <span>Full local FLAC/ALAC/WAV indexing, synchronized lyrics, and Direct UAC1/UAC2 passthrough.</span>
+            </div>
+            <span class="badge badge-native">Free</span>
+          </div>
 
-      <div class="two-col prose-pairing">
-        <div>
-          <p class="body-mono">
-            <strong>Terms &amp; Refunds:</strong> License keys are issued immediately by Lemon Squeezy and activate up to 3 devices via
-            <code>/v1/licenses/activate</code>. Once activated, Mobius verifies entitlement locally and runs 100% offline.
-            Full refunds are available within 14 days via <a href="mailto:dacreportmobius@gmail.com" class="inline-link">dacreportmobius@gmail.com</a>.
+          <div class="pillar-row">
+            <div class="pillar-text">
+              <strong>10-Band 64-Bit Parametric EQ</strong>
+              <span>Surgical peaking, shelf, pass, and notch filters with automatic anti-clipping preamp.</span>
+            </div>
+            <span class="badge badge-accent">Studio</span>
+          </div>
+
+          <div class="pillar-row">
+            <div class="pillar-text">
+              <strong>AutoEQ Headphone &amp; IEM Importer</strong>
+              <span>Import Harman Target profiles and EqualizerAPO <code>ParametricEQ.txt</code> files directly.</span>
+            </div>
+            <span class="badge badge-accent">Studio</span>
+          </div>
+
+          <div class="pillar-row">
+            <div class="pillar-text">
+              <strong>Mobius Tone Matrix</strong>
+              <span>Tune warmth, bass texture, vocal intimacy, and soundstage with an 8-band psychoacoustic macro.</span>
+            </div>
+            <span class="badge badge-accent">Studio</span>
+          </div>
+
+          <div class="pillar-row">
+            <div class="pillar-text">
+              <strong>9:16 Adaptive Ambient Video Share</strong>
+              <span>Export 1080p 9:16 floating-card MP4 clips with synced audio (2 free exports, unlimited in Studio).</span>
+            </div>
+            <span class="badge badge-accent">Studio</span>
+          </div>
+        </div>
+
+        <aside class="studio-cta-box">
+          <p class="eyebrow-sm">Lifetime Studio Key</p>
+          <h3>Unlock Mobius Pro Studio</h3>
+          <p class="muted-copy">
+            Issued immediately by Lemon Squeezy and activates up to 3 devices via <code>/v1/licenses/activate</code>.
+            Once activated, Mobius verifies entitlement locally and runs 100% offline.
           </p>
-        </div>
-        <div class="pairing-actions">
-          <a
-            href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0"
-            target="_blank"
-            rel="noopener"
-            class="btn-square btn-solid"
-          >
-            Buy Lifetime License
-          </a>
-          <a
-            href="https://saweria.co/LortBree"
-            target="_blank"
-            rel="noopener"
-            class="btn-square"
-          >
-            Support via Saweria
-          </a>
-        </div>
+          <p class="muted-copy">
+            Full 14-day refunds available via <a href="mailto:dacreportmobius@gmail.com" class="inline-link">dacreportmobius@gmail.com</a>.
+          </p>
+
+          <div class="stack-actions">
+            <a
+              href="https://mobiusmusic.lemonsqueezy.com/checkout/buy/73fe448d-5d2e-4759-8464-f08af6be8bd8?logo=0"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary btn-full"
+            >
+              Buy Lifetime License
+            </a>
+            <a
+              href="https://saweria.co/LortBree"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-outline btn-full"
+            >
+              Support via Saweria
+            </a>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <!-- USB DAC Matrix & Diagnostic Dump -->
+    <!-- USB DAC Compatibility & Diagnostic Upload -->
     <section class="section container" id="dac-hub">
-      <div class="table-header-row">
-        <div>
-          <h2 class="section-title">Tested <em>USB DACs</em> &amp; diagnostic dumps.</h2>
-          <p class="body-mono">If a DAC is silent or falls back to AAudio, open Settings → USB DAC → Dump / Send DAC Profile.</p>
-        </div>
-        <div class="search-wrap">
-          <label for="dac-search-input" class="sr-only">Filter DACs by name, VID/PID, or protocol</label>
-          <input
-            id="dac-search-input"
-            type="search"
-            class="field-input"
-            placeholder="Filter DAC, VID:PID, UAC1/UAC2..."
-            autocomplete="off"
-          />
-        </div>
-      </div>
-
-      <table class="work-table">
-        <thead>
-          <tr>
-            <th>Device</th>
-            <th>VID:PID</th>
-            <th>Protocol</th>
-            <th>Max Spec</th>
-            <th>HW Vol</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="dac-table-body">
-          <tr>
-            <td colspan="6" class="table-empty">Loading DAC compatibility list...</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="two-col dump-section">
-        <div>
-          <p class="mono-label">Diagnostic Upload · WebMCP</p>
-          <h3 class="sub-title">Submit a DAC profile JSON.</h3>
-          <p class="body-mono">
-            Profile dumps contain only USB Audio Class descriptors, <code>VID:PID</code>, and the last handshake status—no serial numbers or file paths.
-          </p>
-          <p class="support-inline">
-            <a href="mailto:dacreportmobius@gmail.com" class="inline-link">dacreportmobius@gmail.com</a>
-            <span>·</span>
-            <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener" class="inline-link">Telegram Community</a>
-          </p>
-        </div>
-
-        <form
-          id="dac-report-form"
-          class="dump-form"
-          action="/api/dac-report"
-          method="POST"
-          toolname="submit_dac_profile_dump"
-          tooldescription="Submit a Mobius Music USB DAC JSON profile dump to report hardware compatibility or request a driver quirk."
-        >
-          <div class="form-row">
-            <label for="dac-symptom">Symptom</label>
-            <select
-              id="dac-symptom"
-              name="symptom"
-              class="field-input"
-              toolparamdescription="Observed issue: fallback_aaudio, no_sound, glitch, wrong_pitch, or hw_volume_broken"
-            >
-              <option value="fallback_aaudio">Fallback to AAudio</option>
-              <option value="no_sound">No Sound / Silent</option>
-              <option value="glitch">Glitch / Clicks</option>
-              <option value="wrong_pitch">Wrong Pitch / Speed</option>
-              <option value="hw_volume_broken">Hardware Volume Issue</option>
-            </select>
+      <div class="mobius-card dac-shell">
+        <div class="dac-header">
+          <div>
+            <h2>Tested USB DACs &amp; Diagnostic Dumps</h2>
+            <p>If your DAC is silent or falls back to AAudio, open <strong>Settings → USB DAC → Dump / Send DAC Profile</strong>.</p>
           </div>
-
-          <div class="form-row">
-            <label for="dac-email">Reply Email (Optional)</label>
+          <div class="search-wrap">
+            <label for="dac-search-input" class="sr-only">Filter DACs by name, VID/PID, or protocol</label>
             <input
-              id="dac-email"
-              name="email"
-              type="email"
-              class="field-input"
-              placeholder="you@example.com"
-              toolparamdescription="Optional email address to notify when a quirk or fix is released"
+              id="dac-search-input"
+              type="search"
+              class="input-field"
+              placeholder="Search DAC, VID:PID, UAC1/UAC2..."
+              autocomplete="off"
             />
           </div>
+        </div>
 
-          <div class="form-row">
-            <label for="dac-json-input">DAC Profile JSON</label>
-            <textarea
-              id="dac-json-input"
-              name="dac_json"
-              rows="4"
-              required
-              class="field-input"
-              placeholder='{"schema_version":1,"device":{"vid":"0x....","pid":"0x...."},"topology":{...}}'
-              toolparamdescription="Raw schema_version 1 JSON dump generated by Mobius Settings -> USB DAC -> Dump / Send DAC Profile"
-            ></textarea>
-          </div>
+        <div class="table-wrap">
+          <table class="dac-table">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>VID:PID</th>
+                <th>Protocol</th>
+                <th>Max Spec</th>
+                <th>HW Vol</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dac-table-body">
+              <tr>
+                <td colspan="6" class="table-empty">Loading DAC compatibility list...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          <div class="form-submit-row">
-            <button type="submit" class="btn-square btn-solid" id="dac-submit-btn">Submit DAC Dump</button>
-            <p id="dac-form-status" class="form-status" role="status" aria-live="polite"></p>
-          </div>
-        </form>
-      </div>
-    </section>
+        <div class="panel-divider"></div>
 
-    <!-- Download & Footer -->
-    <section class="close-band" id="download">
-      <div class="container">
-        <div class="close-grid">
+        <div class="dump-grid">
           <div>
-            <h2 class="section-title">Listen <em>uncompressed</em> on your own hardware.</h2>
-            <p class="fine-print">
-              v2.0.2 · Android 9+ arm64-v8a (78.8 MB) SHA-256:
-              <button
-                type="button"
-                class="copy-hash"
-                data-copy="369bd82feaa4946d53fbaa97c811ddb7b56b41a5fe9301df7375c4f4bfbc4a8f"
-              >
-                <span>369bd82f…f4bc4a8f</span>
-                <span class="pigment" data-copy-label>[Copy]</span>
-              </button>
-              · macOS DMG (25 MiB) SHA-256: 31b391d2…bd9cc3d6
+            <p class="eyebrow-sm">Diagnostic Upload · WebMCP</p>
+            <h3>Submit a DAC Profile JSON</h3>
+            <p class="muted-copy">
+              Profile dumps contain only USB Audio Class descriptors, <code>VID:PID</code>, and the last handshake status—no serial numbers or file paths.
+            </p>
+            <p class="support-links">
+              <a href="mailto:dacreportmobius@gmail.com" class="inline-link">dacreportmobius@gmail.com</a>
+              <span>·</span>
+              <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener" class="inline-link">Telegram Community</a>
             </p>
           </div>
 
-          <div class="close-actions">
-            <a
-              href="https://github.com/LortBree/mobius-music-releases/releases/download/Release/app-release.apk"
-              target="_blank"
-              rel="noopener"
-              class="btn-square btn-solid"
+          <form
+            id="dac-report-form"
+            class="dump-form"
+            action="/api/dac-report"
+            method="POST"
+            toolname="submit_dac_profile_dump"
+            tooldescription="Submit a Mobius Music USB DAC JSON profile dump to report hardware compatibility or request a driver quirk."
+          >
+            <div class="form-row">
+              <label for="dac-symptom">Symptom</label>
+              <select
+                id="dac-symptom"
+                name="symptom"
+                class="input-field"
+                toolparamdescription="Observed issue: fallback_aaudio, no_sound, glitch, wrong_pitch, or hw_volume_broken"
+              >
+                <option value="fallback_aaudio">Fallback to AAudio</option>
+                <option value="no_sound">No Sound / Silent</option>
+                <option value="glitch">Glitch / Clicks</option>
+                <option value="wrong_pitch">Wrong Pitch / Speed</option>
+                <option value="hw_volume_broken">Hardware Volume Issue</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="dac-email">Reply Email (Optional)</label>
+              <input
+                id="dac-email"
+                name="email"
+                type="email"
+                class="input-field"
+                placeholder="you@example.com"
+                toolparamdescription="Optional email address to notify when a quirk or fix is released"
+              />
+            </div>
+
+            <div class="form-row">
+              <label for="dac-json-input">DAC Profile JSON</label>
+              <textarea
+                id="dac-json-input"
+                name="dac_json"
+                rows="4"
+                required
+                class="input-field input-mono"
+                placeholder='{"schema_version":1,"device":{"vid":"0x....","pid":"0x...."},"topology":{...}}'
+                toolparamdescription="Raw schema_version 1 JSON dump generated by Mobius Settings -> USB DAC -> Dump / Send DAC Profile"
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-tinted" id="dac-submit-btn">Submit DAC Dump</button>
+              <p id="dac-form-status" class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download -->
+    <section class="section container" id="download">
+      <div class="mobius-card download-card">
+        <div>
+          <p class="eyebrow-sm">Release Build · v2.0.2</p>
+          <h2>Listen uncompressed on your own hardware.</h2>
+          <p class="checksum-line">
+            Android 9+ arm64-v8a (78.8 MB) SHA-256:
+            <button
+              type="button"
+              class="copy-hash"
+              data-copy="369bd82feaa4946d53fbaa97c811ddb7b56b41a5fe9301df7375c4f4bfbc4a8f"
             >
-              Download APK (v2.0.2)
-            </a>
-            <a
-              href="https://github.com/LortBree/mobius-music-releases"
-              target="_blank"
-              rel="noopener"
-              class="btn-square"
-            >
-              All Releases
-            </a>
-          </div>
+              <span>369bd82f…f4bc4a8f</span>
+              <span class="accent-text" data-copy-label>Copy</span>
+            </button>
+            · macOS DMG (25 MiB) SHA-256: <code>31b391d2…bd9cc3d6</code>
+          </p>
         </div>
 
-        <footer class="footer-strip">
-          <span>&copy; <span data-year>2026</span> Mobius Music</span>
-          <div class="footer-links">
-            <a href="mailto:dacreportmobius@gmail.com">Email</a>
-            <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">Telegram</a>
-            <a href="https://saweria.co/LortBree" target="_blank" rel="noopener">Saweria</a>
-            <a href="https://github.com/LortBree/mobius-music-releases" target="_blank" rel="noopener">GitHub</a>
-          </div>
-        </footer>
+        <div class="download-actions">
+          <a
+            href="https://github.com/LortBree/mobius-music-releases/releases/download/Release/app-release.apk"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-primary"
+          >
+            Download APK (v2.0.2)
+          </a>
+          <a
+            href="https://github.com/LortBree/mobius-music-releases"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-outline"
+          >
+            All Releases
+          </a>
+        </div>
       </div>
     </section>
   </main>
 
-  <script src="js/main.js?v=11" defer></script>
+  <footer class="container footer">
+    <span>&copy; <span data-year>2026</span> Mobius Music</span>
+    <div class="footer-links">
+      <a href="mailto:dacreportmobius@gmail.com">Email</a>
+      <a href="https://t.me/+hIBuaTMIvPNhYTQ1" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://saweria.co/LortBree" target="_blank" rel="noopener">Saweria</a>
+      <a href="https://github.com/LortBree/mobius-music-releases" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=12" defer></script>
 </body>
 </html>

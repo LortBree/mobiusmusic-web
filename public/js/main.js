@@ -26,11 +26,11 @@
 
   $$('[data-copy]').forEach((btn) => {
     const label = $('[data-copy-label]', btn);
-    const original = label ? label.textContent : '[Copy]';
+    const original = label ? label.textContent : 'Copy';
     btn.addEventListener('click', async () => {
       const ok = await copyText(btn.dataset.copy);
       if (!label) return;
-      label.textContent = ok ? '[Copied]' : '[Failed]';
+      label.textContent = ok ? 'Copied' : 'Failed';
       clearTimeout(btn._t);
       btn._t = setTimeout(() => { label.textContent = original; }, 1600);
     });
@@ -74,8 +74,11 @@
       tdVol.textContent = dac.hw_volume ? 'Hardware' : 'Software';
 
       const tdStatus = document.createElement('td');
-      tdStatus.className = 'dac-status-cell';
-      tdStatus.textContent = dac.status || 'Testing';
+      const statusText = dac.status || 'Testing';
+      const badge = document.createElement('span');
+      badge.className = `badge ${/verified|native/i.test(statusText) ? 'badge-native' : 'badge-compat'}`;
+      badge.textContent = statusText;
+      tdStatus.appendChild(badge);
 
       tr.append(tdName, tdId, tdProto, tdSpec, tdVol, tdStatus);
       dacTableBody.appendChild(tr);
