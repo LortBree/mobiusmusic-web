@@ -4,22 +4,58 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
-  // 1. Signal path switcher
-  const tabButtons = $$('.segmented [data-path]');
-  const pathViews = $$('[data-path-view]');
-  tabButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const target = btn.dataset.path;
-      tabButtons.forEach((b) => {
-        const active = b.dataset.path === target;
-        b.classList.toggle('is-active', active);
-        b.setAttribute('aria-selected', String(active));
-      });
-      pathViews.forEach((panel) => {
-        panel.hidden = panel.dataset.pathView !== target;
-      });
-    });
-  });
+  // 1. Pinned Study: travel marker along real semicircle arc (R=150, C=(210,190))
+  const studySection = $('#study');
+  const studyMarker = $('#study-marker');
+  const studyRadius = $('#study-radius');
+  const roTransfers = $('#ro-transfers');
+  const roLatency = $('#ro-latency');
+  const roNominal = $('#ro-nominal');
+  const roAngle = $('#ro-angle');
+
+  const updatePinnedStudy = () => {
+    if (!studySection || !studyMarker || !studyRadius) return;
+    const rect = studySection.getBoundingClientRect();
+    const scrollable = Math.max(1, studySection.offsetHeight - window.innerHeight);
+    const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+
+    // Arc angle from pi (left = 0%) to 0 (right = 100%)
+    const thetaDeg = progress * 180;
+    const thetaRad = (1 - progress) * Math.PI;
+    const cx = 210 + 150 * Math.cos(thetaRad);
+    const cy = 190 - 150 * Math.sin(thetaRad);
+
+    studyMarker.setAttribute('cx', cx.toFixed(1));
+    studyMarker.setAttribute('cy', cy.toFixed(1));
+    studyRadius.setAttribute('x2', cx.toFixed(1));
+    studyRadius.setAttribute('y2', cy.toFixed(1));
+
+    // Exact uac2_driver transfer math: 32..256 transfers * 2 ms = 64..512 ms
+    const transfers = Math.round(32 + progress * (256 - 32));
+    const latencyMs = transfers * 2.0;
+    // 96 kHz / 8000 microframes/s = 12.000 frames/uFrame; +/- 0.15% drift across occupancy
+    const driftFactor = 1 + (progress - 0.5) * 0.003;
+    const framesPerUf = 12.0 * driftFactor;
+
+    if (roTransfers) roTransfers.textContent = `${transfers} × 2 ms`;
+    if (roLatency) roLatency.textContent = `${latencyMs.toFixed(1)} ms`;
+    if (roNominal) roNominal.textContent = `${framesPerUf.toFixed(3)} f/µF`;
+    if (roAngle) roAngle.textContent = `${thetaDeg.toFixed(1)}°`;
+  };
+
+  if (studySection) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updatePinnedStudy();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+    updatePinnedStudy();
+  }
 
   // 2. Copy SHA-256 checksum
   const copyText = async (text) => {
@@ -43,17 +79,17 @@
 
   $$('[data-copy]').forEach((btn) => {
     const label = $('[data-copy-label]', btn);
-    const original = label ? label.textContent : 'Copy';
+    const original = label ? label.textContent : '[Copy]';
     btn.addEventListener('click', async () => {
       const ok = await copyText(btn.dataset.copy);
       if (!label) return;
-      label.textContent = ok ? 'Copied' : 'Failed';
+      label.textContent = ok ? '[Copied]' : '[Failed]';
       clearTimeout(btn._t);
       btn._t = setTimeout(() => { label.textContent = original; }, 1600);
     });
   });
 
-  // 3. DAC Compatibility Matrix & Diagnostic Upload (with WebMCP)
+  // 3. Work Table: USB DAC Compatibility & Diagnostic Upload (with WebMCP)
   let dacCatalog = [];
   const dacTableBody = $('#dac-table-body');
   const dacSearchInput = $('#dac-search-input');
@@ -64,9 +100,9 @@
     if (!items.length) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 5;
+      td.colSpan = 6;
       td.className = 'table-empty';
-      td.textContent = 'No matching DACs yet. Submit your profile dump on the right.';
+      td.textContent = 'No matching DACs yet. Submit your profile dump below.';
       tr.appendChild(td);
       dacTableBody.appendChild(tr);
       return;
@@ -75,29 +111,26 @@
       const tr = document.createElement('tr');
 
       const tdName = document.createElement('td');
+      tdName.className = 'dac-title';
       tdName.textContent = dac.name || 'Unknown DAC';
-      const proto = document.createElement('span');
-      proto.className = 'dac-proto';
-      proto.textContent = dac.protocol || 'UAC2';
-      tdName.appendChild(proto);
 
       const tdId = document.createElement('td');
       tdId.textContent = `${dac.vid}:${dac.pid}`;
+
+      const tdProto = document.createElement('td');
+      tdProto.textContent = dac.protocol || 'UAC2';
 
       const tdSpec = document.createElement('td');
       tdSpec.textContent = `${dac.max_rate || '-'} / ${dac.max_bits || '-'}`;
 
       const tdVol = document.createElement('td');
-      tdVol.textContent = dac.hw_volume ? 'Yes' : 'SW';
+      tdVol.textContent = dac.hw_volume ? 'Hardware' : 'Software';
 
       const tdStatus = document.createElement('td');
-      const pill = document.createElement('span');
-      const verified = String(dac.status || '').toLowerCase().includes('verified');
-      pill.className = `dac-status${verified ? ' is-verified' : ''}`;
-      pill.textContent = dac.status || 'Testing';
-      tdStatus.appendChild(pill);
+      tdStatus.className = 'dac-status-cell';
+      tdStatus.textContent = dac.status || 'Testing';
 
-      tr.append(tdName, tdId, tdSpec, tdVol, tdStatus);
+      tr.append(tdName, tdId, tdProto, tdSpec, tdVol, tdStatus);
       dacTableBody.appendChild(tr);
     });
   };
@@ -155,10 +188,7 @@
   if (dacReportForm) {
     dacReportForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (dacFormStatus) {
-        dacFormStatus.classList.remove('is-error');
-        dacFormStatus.textContent = 'Submitting DAC profile...';
-      }
+      if (dacFormStatus) dacFormStatus.textContent = 'Submitting DAC profile...';
       if (dacSubmitBtn) dacSubmitBtn.disabled = true;
 
       try {
@@ -169,12 +199,11 @@
           email: fd.get('email'),
         });
         if (dacFormStatus) {
-          dacFormStatus.textContent = result.message || 'Submitted! Thank you for helping expand Mobius DAC support.';
+          dacFormStatus.textContent = result.message || 'Submitted. Thank you.';
         }
         dacReportForm.reset();
       } catch (err) {
         if (dacFormStatus) {
-          dacFormStatus.classList.add('is-error');
           dacFormStatus.textContent = err.message || 'Invalid JSON or upload failed.';
         }
       } finally {
