@@ -1,0 +1,42 @@
+[
+  {
+    "vid": "0x2972",
+    "pid": "0x0102",
+    "name": "FiiO JadeAudio JA11",
+    "protocol": "UAC2",
+    "max_rate": "384 kHz",
+    "max_bits": "32-bit",
+    "hw_volume": true,
+    "status": "Verified Bit-Perfect"
+  },
+  {
+    "vid": "0x05ac",
+    "pid": "0x110a",
+    "name": "Apple USB-C to 3.5mm Adapter",
+    "protocol": "UAC1",
+    "max_rate": "48 kHz",
+    "max_bits": "24-bit",
+    "hw_volume": true,
+    "status": "Verified Bit-Perfect"
+  },
+  {
+    "vid": "0x2fc6",
+    "pid": "0xf00a",
+    "name": "Moondrop Dawn Pro",
+    "protocol": "UAC2",
+    "max_rate": "384 kHz",
+    "max_bits": "32-bit",
+    "hw_volume": true,
+    "status": "Community Reported"
+  },
+  {
+    "vid": "0x3336",
+    "pid": "0x0104",
+    "name": "iBasso DC04 Pro",
+    "protocol": "UAC2",
+    "max_rate": "384 kHz",
+    "max_bits": "32-bit",
+    "hw_volume": true,
+    "status": "Community Reported"
+  }
+]
